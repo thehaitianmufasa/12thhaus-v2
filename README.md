@@ -1,335 +1,300 @@
-# LangGraph Multi-Agent System
+# 🚀 LangGraph Multi-Agent Platform
 
-A sophisticated multi-agent system built with LangGraph and integrated with LangSmith for monitoring and observability. The system features a master agent that intelligently routes tasks to 5 specialized agents, each with their own Standard Operating Procedures (SOPs).
+A production-ready, multi-tenant AI agent platform that automatically builds and deploys applications. Think of it as your personal AI development team that can take natural language requests and turn them into live applications.
 
-## Architecture
+## 🎯 What This Platform Does
+
+**In Simple Terms**: You describe what you want, and our AI agents build it for you automatically.
+
+**Example Flow**:
+1. You say: *"Build me a customer survey app for my restaurant"*
+2. Master Agent analyzes your request
+3. Code Generation Agent writes the application
+4. Deployment Agent publishes it live to the web
+5. Business Intelligence Agent sets up analytics
+6. Customer Operations Agent handles user support
+
+## 🏗️ Platform Architecture
 
 ```
-                    ┌─────────────────┐
-                    │   Master Agent  │
-                    │   (Task Router) │
-                    └─────────┬───────┘
-                              │
-                    ┌─────────┴───────┐
-                    │  Task Analysis  │
-                    │  & Routing      │
-                    └─────────┬───────┘
-                              │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-        ▼                     ▼                     ▼
-┌─────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Code      │    │   Deployment    │    │   Business      │
-│ Generation  │    │     Agent       │    │ Intelligence    │
-│   Agent     │    │                 │    │     Agent       │
-└─────────────┘    └─────────────────┘    └─────────────────┘
-        │                     │                     │
-        ▼                     ▼                     ▼
-┌─────────────┐    ┌─────────────────┐
-│  Customer   │    │   Marketing     │
-│ Operations  │    │  Automation     │
-│   Agent     │    │     Agent       │
-└─────────────┘    └─────────────────┘
-        │                     │
-        └─────────────────────┘
-                    │
-                    ▼
-        ┌─────────────────────┐
-        │   LangSmith         │
-        │   Monitoring        │
-        └─────────────────────┘
+                        ┌─────────────────────┐
+                        │    Web Dashboard    │
+                        │  (Next.js Frontend) │
+                        └──────────┬──────────┘
+                                   │
+                        ┌──────────┴──────────┐
+                        │   GraphQL API       │
+                        │   (Hasura Engine)   │
+                        └──────────┬──────────┘
+                                   │
+                        ┌──────────┴──────────┐
+                        │  Multi-Tenant DB    │
+                        │   (PostgreSQL)      │
+                        └──────────┬──────────┘
+                                   │
+                     ┌─────────────┴─────────────┐
+                     │                           │
+            ┌────────▼────────┐         ┌───────▼────────┐
+            │  Master Agent   │         │  N8N Workflow  │
+            │ (Task Router)   │◄────────┤    Engine      │
+            └────────┬────────┘         └────────────────┘
+                     │
+           ┌─────────┴───────┐
+           │ Task Analysis   │
+           │ & Routing       │
+           └─────────┬───────┘
+                     │
+   ┌─────────────────┼─────────────────┐
+   │                 │                 │
+   ▼                 ▼                 ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│    Code     │ │ Deployment  │ │  Business   │
+│ Generation  │ │    Agent    │ │Intelligence │
+│   Agent     │ │             │ │   Agent     │
+└─────────────┘ └─────────────┘ └─────────────┘
+   │                 │                 │
+   ▼                 ▼                 ▼
+┌─────────────┐ ┌─────────────┐
+│  Customer   │ │  Marketing  │
+│ Operations  │ │ Automation  │
+│   Agent     │ │   Agent     │
+└─────────────┘ └─────────────┘
+   │                 │
+   └─────────────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   LangSmith         │
+│   Monitoring        │
+└─────────────────────┘
 ```
 
-## Features
+## ✨ Key Features
 
-- **Master Agent**: Intelligent task routing based on content analysis
-- **5 Specialized Agents**: Each with domain-specific expertise
-- **SOP Integration**: Standard Operating Procedures for consistent behavior
-- **LangSmith Integration**: Complete observability and monitoring
-- **Task Coordination**: Queue management and resource coordination
-- **Performance Monitoring**: Real-time metrics and health checks
+### 🔐 **Enterprise Authentication & Security**
+- Multi-tenant architecture with complete data isolation
+- Role-based access control (Admin, Tenant Admin, User)
+- JWT authentication with NextAuth.js
+- Row-level security in PostgreSQL
 
-## Specialized Agents
+### 💳 **Complete Payment Infrastructure**
+- Stripe integration with subscription management
+- Free, Pro ($49/mo), Enterprise ($199/mo) plans
+- Usage tracking and billing automation
+- Customer portal for subscription management
 
-### 1. Code Generation Agent
-- **Purpose**: Generate high-quality code from natural language prompts
-- **Capabilities**: 
-  - Code generation with best practices
-  - Documentation and comments
-  - Error handling
-  - Basic testing examples
+### 🤖 **AI Agent System**
+- **Master Agent**: Routes tasks to specialized agents
+- **Code Generation Agent**: Writes applications from descriptions
+- **Deployment Agent**: Publishes apps to production
+- **Business Intelligence Agent**: Creates analytics and insights
+- **Customer Operations Agent**: Handles support and onboarding
+- **Marketing Automation Agent**: Manages campaigns and content
 
-### 2. Deployment Agent
-- **Purpose**: Handle CI/CD and production deployments
-- **Capabilities**:
-  - Deployment strategy planning
-  - Risk assessment
-  - Rollback procedures
-  - Health monitoring
+### 🔄 **Workflow Automation**
+- N8N integration for complex business processes
+- Real-time monitoring and error handling
+- Automated deployment pipelines
+- Multi-channel notifications (Email, SMS, Slack, Webhooks)
 
-### 3. Business Intelligence Agent
-- **Purpose**: Analyze metrics and provide business insights
-- **Capabilities**:
-  - Data analysis recommendations
-  - KPI tracking
-  - Visualization suggestions
-  - Optimization insights
+### 📊 **Real-Time Dashboard**
+- Live project management interface
+- Real-time GraphQL subscriptions
+- Mobile-responsive design
+- Comprehensive settings and API key management
 
-### 4. Customer Operations Agent
-- **Purpose**: Handle customer support and onboarding
-- **Capabilities**:
-  - Customer inquiry resolution
-  - Onboarding guidance
-  - Issue escalation
-  - Satisfaction tracking
+## 🛠️ Technology Stack
 
-### 5. Marketing Automation Agent
-- **Purpose**: Generate marketing content and manage campaigns
-- **Capabilities**:
-  - Content creation
-  - Campaign strategy
-  - Performance analysis
-  - Optimization recommendations
+### **Frontend**
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Modern styling
+- **Apollo Client** - GraphQL state management
 
-## Installation
+### **Backend**
+- **Hasura** - GraphQL API engine
+- **PostgreSQL** - Multi-tenant database
+- **N8N** - Workflow automation
+- **Stripe** - Payment processing
 
-1. **Clone or create the project directory**:
+### **AI & Monitoring**
+- **LangGraph** - Agent orchestration
+- **LangSmith** - AI monitoring and observability
+- **Anthropic Claude** - Language model
+
+### **Infrastructure**
+- **Vercel** - Frontend hosting and serverless functions
+- **GitHub Actions** - CI/CD pipeline
+- **Docker** - Containerization
+
+## 🚀 Quick Start
+
+### 1. Clone and Setup
 ```bash
-mkdir langgraph-multi-agent
-cd langgraph-multi-agent
+git clone https://github.com/your-repo/langgraph-multi-agent-platform.git
+cd langgraph-multi-agent-platform
 ```
 
-2. **Create virtual environment**:
+### 2. Backend Setup (Hasura + PostgreSQL)
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+cd backend
+docker-compose up -d
 ```
 
-3. **Install dependencies**:
+### 3. Frontend Setup
 ```bash
-pip install langgraph langsmith langchain-anthropic python-dotenv
+cd frontend
+npm install
+cp .env.example .env.local
+# Add your environment variables
+npm run dev
 ```
 
-4. **Configure environment variables**:
-Create a `.env` file with:
+### 4. Configure Environment Variables
+
+**Frontend (.env.local)**:
 ```env
+# Hasura GraphQL
+NEXT_PUBLIC_HASURA_GRAPHQL_URL=http://localhost:8080/v1/graphql
+NEXT_PUBLIC_HASURA_GRAPHQL_WS_URL=ws://localhost:8080/v1/graphql
+HASURA_GRAPHQL_ADMIN_SECRET=admin-secret
+
+# Authentication
+NEXTAUTH_SECRET=your-nextauth-secret
+NEXTAUTH_URL=http://localhost:3000
+
+# Stripe (Optional for payments)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_key
+STRIPE_SECRET_KEY=sk_test_your_key
+STRIPE_WEBHOOK_SECRET=whsec_your_secret
+```
+
+**AI Agents (.env)**:
+```env
+# LangSmith Monitoring
 LANGCHAIN_TRACING_V2=true
-LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
-LANGCHAIN_API_KEY=your_langsmith_api_key_here
+LANGCHAIN_API_KEY=your_langsmith_api_key
 LANGCHAIN_PROJECT=langgraph-multi-agent
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+# AI Model
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
-## Usage
+## 💡 Usage Examples
 
-### Command Line Interface
+### **Web Dashboard**
+1. Go to `http://localhost:3000`
+2. Create an account (automatically sets up your tenant)
+3. Complete the onboarding wizard
+4. Start creating projects with AI agents
 
-1. **Process a single task**:
-```bash
-python main.py task --task "Create a Python function to calculate fibonacci numbers"
+### **API Integration**
+```typescript
+// Example: Create a project via GraphQL
+mutation CreateProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
+    id
+    name
+    status
+  }
+}
 ```
 
-2. **Process with priority and context**:
-```bash
-python main.py task --task "Deploy my Flask app" --priority high --context '{"platform": "AWS"}'
-```
-
-3. **Check system status**:
-```bash
-python main.py status
-```
-
-4. **Run demonstration**:
-```bash
-python main.py demo
-```
-
-5. **Interactive mode**:
-```bash
-python main.py interactive
-```
-
-### Python API
-
+### **Agent Task Processing**
 ```python
-from main import MultiAgentSystem
-import asyncio
-
-async def main():
-    system = MultiAgentSystem()
-    
-    # Process a task
-    response = await system.process_task(
-        "Create a REST API using FastAPI",
-        priority="high",
-        context={"framework": "FastAPI", "database": "PostgreSQL"}
-    )
-    
-    print(response)
-
-asyncio.run(main())
+# Process a task through the Master Agent
+response = await master_agent.process_task(
+    task="Build a customer feedback form",
+    priority="high",
+    context={"industry": "restaurant", "platform": "web"}
+)
 ```
 
-## Configuration
-
-### Environment Variables
-
-- `LANGCHAIN_TRACING_V2`: Enable LangSmith tracing (default: true)
-- `LANGCHAIN_ENDPOINT`: LangSmith API endpoint
-- `LANGCHAIN_API_KEY`: Your LangSmith API key
-- `LANGCHAIN_PROJECT`: Project name in LangSmith
-- `ANTHROPIC_API_KEY`: Your Anthropic API key
-- `AGENT_TEMPERATURE`: LLM temperature (default: 0.7)
-- `AGENT_MAX_TOKENS`: Maximum tokens per response (default: 4000)
-
-### SOP Files
-
-The system automatically creates Standard Operating Procedure files for each agent in the `sop_files/` directory:
-
-- `code_generation_sop.json`
-- `deployment_sop.json`
-- `business_intelligence_sop.json`
-- `customer_operations_sop.json`
-- `marketing_automation_sop.json`
-
-You can customize these files to modify agent behavior and responsibilities.
-
-## Monitoring
-
-### LangSmith Integration
-
-The system is fully integrated with LangSmith for:
-- Request tracing
-- Performance monitoring
-- Error tracking
-- Agent behavior analysis
-
-### Health Checks
-
-Monitor system health with:
-```python
-from monitoring import get_monitor
-
-monitor = get_monitor()
-health = monitor.get_system_health()
-metrics = monitor.get_performance_metrics()
-```
-
-### Performance Metrics
-
-- Task completion rates
-- Response times
-- Error rates
-- Agent utilization
-- System uptime
-
-## File Structure
+## 📁 Project Structure
 
 ```
 langgraph-multi-agent/
-├── main.py                 # Main application entry point
-├── config.py              # Configuration management
-├── master_agent.py        # Master agent implementation
-├── specialist_agents.py   # All specialized agents
-├── sop_reader.py          # SOP file management
-├── monitoring.py          # Monitoring and coordination
-├── .env                   # Environment variables
-├── README.md             # This file
-└── sop_files/            # SOP files directory
-    ├── code_generation_sop.json
-    ├── deployment_sop.json
-    ├── business_intelligence_sop.json
-    ├── customer_operations_sop.json
-    └── marketing_automation_sop.json
+├── frontend/                 # Next.js application
+│   ├── src/
+│   │   ├── app/             # App Router pages
+│   │   ├── components/      # React components
+│   │   ├── hooks/           # Custom hooks
+│   │   └── lib/             # Utilities and config
+│   ├── public/              # Static assets
+│   └── package.json
+├── backend/                 # Hasura + PostgreSQL
+│   ├── hasura/
+│   │   ├── migrations/      # Database schema
+│   │   ├── metadata/        # Hasura configuration
+│   │   └── seeds/           # Initial data
+│   └── docker-compose.yml
+├── agents/                  # AI agent system
+│   ├── master_agent.py      # Task routing
+│   ├── specialist_agents.py # Specialized agents
+│   ├── sop_files/          # Standard operating procedures
+│   └── monitoring.py        # LangSmith integration
+├── workflows/               # N8N automation
+│   └── templates/           # Workflow templates
+├── BENCHMARKS.md           # Development progress
+└── README.md               # This file
 ```
 
-## Example Tasks
+## 🎯 Current Status
 
-### Code Generation
-```
-Task: "Create a Python class for managing user authentication"
-Agent: Code Generation Agent
-Output: Complete Python class with methods, documentation, and examples
-```
+**Day 20 of 30-day sprint** - **75% Complete**
 
-### Deployment
-```
-Task: "How do I deploy a Django app to production?"
-Agent: Deployment Agent
-Output: Step-by-step deployment guide with security considerations
-```
+✅ **Completed Streams**:
+- **Stream 1**: Foundation & Architecture (100%)
+- **Stream 2**: Workflow Automation (100%)  
+- **Stream 3**: User Experience + Payment System (100%)
 
-### Business Intelligence
-```
-Task: "Analyze our customer retention metrics"
-Agent: Business Intelligence Agent
-Output: Analysis framework, key metrics, and recommendations
+🚧 **Next**: Stream 4 - Testing & Documentation
+
+## 🔧 Development
+
+### **Run Tests**
+```bash
+cd frontend && npm test
+cd backend && npm run test:hasura
 ```
 
-### Customer Operations
-```
-Task: "A customer can't access their dashboard"
-Agent: Customer Operations Agent
-Output: Troubleshooting steps and resolution process
+### **Build for Production**
+```bash
+cd frontend && npm run build
 ```
 
-### Marketing Automation
-```
-Task: "Create a product launch campaign"
-Agent: Marketing Automation Agent
-Output: Campaign strategy, content ideas, and success metrics
-```
+### **Deploy**
+The platform automatically deploys via GitHub Actions to Vercel.
 
-## Advanced Features
+## 📊 Features by Plan
 
-### Task Coordination
-- Queue management for high-volume requests
-- Resource locks for concurrent operations
-- Priority-based task scheduling
+| Feature | Free | Pro ($49/mo) | Enterprise ($199/mo) |
+|---------|------|-------------|---------------------|
+| Users | 2 | 10 | Unlimited |
+| Projects | 3 | 25 | Unlimited |
+| Workflows | 5 | Unlimited | Unlimited |
+| AI Agents | Basic | Advanced | Custom |
+| Support | Community | Priority | Dedicated |
 
-### Error Handling
-- Graceful degradation on agent failures
-- Automatic retry mechanisms
-- Comprehensive error logging
+## 🤝 Contributing
 
-### Extensibility
-- Easy addition of new specialist agents
-- Configurable routing logic
-- Plugin-based SOP system
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## Troubleshooting
+## 📄 License
 
-### Common Issues
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. **Missing API Keys**: Ensure all required environment variables are set
-2. **Import Errors**: Check that all dependencies are installed
-3. **Agent Failures**: Check logs for specific error messages
-4. **LangSmith Issues**: Verify API key and endpoint configuration
+## 🆘 Support
 
-### Debug Mode
+- **Documentation**: Check the inline docs and code comments
+- **Issues**: Create a GitHub issue for bugs or feature requests
+- **Monitoring**: Use LangSmith dashboard for AI agent debugging
+- **Community**: Join our discussions for questions and tips
 
-Enable debug logging:
-```python
-import logging
-logging.basicConfig(level=logging.DEBUG)
-```
+---
 
-## Contributing
-
-1. Follow the existing code structure
-2. Add comprehensive docstrings
-3. Include LangSmith tracing decorators
-4. Update SOPs when adding new agents
-5. Add appropriate tests
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review LangSmith traces for errors
-3. Examine agent logs for specific issues
-4. Verify configuration settings
+**Built with ❤️ using LangGraph, Next.js, and modern AI**
