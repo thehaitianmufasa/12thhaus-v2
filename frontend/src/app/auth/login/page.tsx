@@ -33,7 +33,7 @@ export default function LoginPage() {
       } else if (result?.ok) {
         router.push(from);
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during login');
     } finally {
       setIsLoading(false);

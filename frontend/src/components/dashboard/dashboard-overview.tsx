@@ -5,7 +5,6 @@ import { useSystemHealth } from '@/hooks/use-subscriptions';
 import { RealTimeFeed, NotificationCenter } from './real-time-feed';
 
 export function DashboardOverview() {
-  const { tenantId } = useAuth();
   const { data: healthData } = useSystemHealth();
 
   // Combine mock data with real-time health data

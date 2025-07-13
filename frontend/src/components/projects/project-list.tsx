@@ -8,7 +8,6 @@ import { CreateProjectModal } from './create-project-modal';
 export function ProjectList() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'active' | 'paused' | 'archived'>('all');
-  const { tenantId } = useAuth();
 
   // Mock data for now - will be replaced with GraphQL queries
   const projects = [
@@ -75,7 +74,7 @@ export function ProjectList() {
     all: projects.length,
     active: projects.filter(p => p.status === 'active').length,
     paused: projects.filter(p => p.status === 'paused').length,
-    archived: projects.filter(p => p.status === 'archived').length,
+    archived: 0, // No archived projects in mock data
   };
 
   return (

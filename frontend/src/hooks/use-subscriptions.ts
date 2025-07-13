@@ -269,7 +269,7 @@ export function useDashboardActivity() {
 
 export function useNotifications() {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) return;
