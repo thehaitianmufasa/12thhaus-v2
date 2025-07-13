@@ -80,20 +80,25 @@ export function ProjectList() {
   return (
     <div className="space-y-6">
       {/* Header with filters and create button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center space-x-4">
-          <div className="flex rounded-lg bg-gray-100 p-1">
+      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="flex items-start sm:items-center">
+          <div className="grid grid-cols-2 sm:flex rounded-lg bg-gray-100 p-1 w-full sm:w-auto gap-1 sm:gap-0">
             {Object.entries(statusCounts).map(([status, count]) => (
               <button
                 key={status}
                 onClick={() => setFilter(status as any)}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 py-2 sm:py-1.5 text-xs sm:text-sm font-medium rounded-md transition-colors touch-manipulation min-h-[44px] sm:min-h-auto ${
                   filter === status
                     ? 'bg-white text-gray-900 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1)} ({count})
+                <span className="block sm:inline">
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </span>
+                <span className="block sm:inline">
+                  {' '}({count})
+                </span>
               </button>
             ))}
           </div>
@@ -101,12 +106,12 @@ export function ProjectList() {
         
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center justify-center px-4 py-3 sm:py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 touch-manipulation w-full sm:w-auto"
         >
-          <svg className="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+          <svg className="-ml-1 mr-2 h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          New Project
+          <span className="whitespace-nowrap">New Project</span>
         </button>
       </div>
 
@@ -135,7 +140,7 @@ export function ProjectList() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {filteredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
