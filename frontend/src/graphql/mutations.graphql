@@ -1,0 +1,213 @@
+# =====================================================
+# Project Management Mutations
+# =====================================================
+
+mutation CreateProject($input: projects_insert_input!) {
+  insert_projects_one(object: $input) {
+    id
+    name
+    description
+    status
+    tech_stack
+    tenant_id
+    created_by
+    created_at
+    updated_at
+  }
+}
+
+mutation UpdateProject($project_id: uuid!, $updates: projects_set_input!) {
+  update_projects_by_pk(pk_columns: {id: $project_id}, _set: $updates) {
+    id
+    name
+    description
+    status
+    tech_stack
+    repository_url
+    deployment_url
+    updated_at
+  }
+}
+
+mutation DeleteProject($project_id: uuid!) {
+  delete_projects_by_pk(id: $project_id) {
+    id
+    name
+  }
+}
+
+# =====================================================
+# Agent Management Mutations
+# =====================================================
+
+mutation CreateAgent($input: agents_insert_input!) {
+  insert_agents_one(object: $input) {
+    id
+    name
+    type
+    status
+    configuration
+    project_id
+    tenant_id
+    created_at
+    updated_at
+  }
+}
+
+mutation UpdateAgent($agent_id: uuid!, $updates: agents_set_input!) {
+  update_agents_by_pk(pk_columns: {id: $agent_id}, _set: $updates) {
+    id
+    name
+    type
+    status
+    configuration
+    updated_at
+  }
+}
+
+mutation DeleteAgent($agent_id: uuid!) {
+  delete_agents_by_pk(id: $agent_id) {
+    id
+    name
+  }
+}
+
+mutation UpdateAgentStatus($agent_id: uuid!, $status: String!) {
+  update_agents_by_pk(
+    pk_columns: {id: $agent_id}
+    _set: {status: $status, updated_at: "now()"}
+  ) {
+    id
+    status
+    updated_at
+  }
+}
+
+# =====================================================
+# Workflow Management Mutations
+# =====================================================
+
+mutation CreateWorkflow($input: workflows_insert_input!) {
+  insert_workflows_one(object: $input) {
+    id
+    name
+    description
+    status
+    trigger_type
+    configuration
+    project_id
+    tenant_id
+    created_at
+    updated_at
+  }
+}
+
+mutation UpdateWorkflow($workflow_id: uuid!, $updates: workflows_set_input!) {
+  update_workflows_by_pk(pk_columns: {id: $workflow_id}, _set: $updates) {
+    id
+    name
+    description
+    status
+    trigger_type
+    configuration
+    updated_at
+  }
+}
+
+mutation DeleteWorkflow($workflow_id: uuid!) {
+  delete_workflows_by_pk(id: $workflow_id) {
+    id
+    name
+  }
+}
+
+mutation ExecuteWorkflow($workflow_id: uuid!, $input_data: jsonb) {
+  insert_workflow_executions_one(
+    object: {
+      workflow_id: $workflow_id
+      status: "running"
+      started_at: "now()"
+      input_data: $input_data
+    }
+  ) {
+    id
+    status
+    started_at
+    workflow {
+      id
+      name
+    }
+  }
+}
+
+# =====================================================
+# User Management Mutations
+# =====================================================
+
+mutation UpdateUserProfile($user_id: uuid!, $updates: users_set_input!) {
+  update_users_by_pk(pk_columns: {id: $user_id}, _set: $updates) {
+    id
+    email
+    full_name
+    avatar_url
+    updated_at
+  }
+}
+
+mutation InviteTenantUser($input: tenant_users_insert_input!) {
+  insert_tenant_users_one(object: $input) {
+    id
+    tenant_id
+    user_id
+    role
+    status
+    joined_at
+  }
+}
+
+mutation UpdateTenantUserRole($tenant_user_id: uuid!, $role: String!) {
+  update_tenant_users_by_pk(
+    pk_columns: {id: $tenant_user_id}
+    _set: {role: $role, updated_at: "now()"}
+  ) {
+    id
+    role
+    updated_at
+  }
+}
+
+mutation RemoveTenantUser($tenant_user_id: uuid!) {
+  delete_tenant_users_by_pk(id: $tenant_user_id) {
+    id
+    user {
+      email
+      full_name
+    }
+  }
+}
+
+# =====================================================
+# API Key Management Mutations
+# =====================================================
+
+mutation GenerateApiKey($input: api_keys_insert_input!) {
+  insert_api_keys_one(object: $input) {
+    id
+    name
+    key_prefix
+    permissions
+    expires_at
+    created_at
+  }
+}
+
+mutation RevokeApiKey($key_id: uuid!) {
+  update_api_keys_by_pk(
+    pk_columns: {id: $key_id}
+    _set: {status: "revoked", updated_at: "now()"}
+  ) {
+    id
+    name
+    status
+  }
+}

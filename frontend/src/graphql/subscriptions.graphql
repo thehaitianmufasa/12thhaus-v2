@@ -1,0 +1,215 @@
+# =====================================================
+# Real-Time Project Subscriptions
+# =====================================================
+
+subscription ProjectUpdates($tenant_id: uuid!) {
+  projects(
+    where: {tenant_id: {_eq: $tenant_id}}
+    order_by: {updated_at: desc}
+  ) {
+    id
+    name
+    status
+    updated_at
+    agents_aggregate {
+      aggregate {
+        count
+      }
+    }
+    workflows_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+
+subscription ProjectStatusChanges($project_id: uuid!, $tenant_id: uuid!) {
+  projects(
+    where: {id: {_eq: $project_id}, tenant_id: {_eq: $tenant_id}}
+  ) {
+    id
+    name
+    status
+    updated_at
+  }
+}
+
+# =====================================================
+# Agent Status Subscriptions
+# =====================================================
+
+subscription AgentStatusUpdates($project_id: uuid!, $tenant_id: uuid!) {
+  agents(
+    where: {project_id: {_eq: $project_id}, tenant_id: {_eq: $tenant_id}}
+    order_by: {updated_at: desc}
+  ) {
+    id
+    name
+    type
+    status
+    updated_at
+  }
+}
+
+subscription AllAgentUpdates($tenant_id: uuid!) {
+  agents(
+    where: {tenant_id: {_eq: $tenant_id}}
+    order_by: {updated_at: desc}
+  ) {
+    id
+    name
+    type
+    status
+    updated_at
+    project {
+      id
+      name
+    }
+  }
+}
+
+# =====================================================
+# Workflow Execution Subscriptions
+# =====================================================
+
+subscription WorkflowExecutionUpdates($workflow_id: uuid!, $tenant_id: uuid!) {
+  workflow_executions(
+    where: {workflow_id: {_eq: $workflow_id}, tenant_id: {_eq: $tenant_id}}
+    order_by: {started_at: desc}
+    limit: 10
+  ) {
+    id
+    status
+    started_at
+    completed_at
+    execution_time_ms
+    error_message
+    workflow {
+      id
+      name
+    }
+  }
+}
+
+subscription LiveWorkflowExecutions($tenant_id: uuid!) {
+  workflow_executions(
+    where: {
+      tenant_id: {_eq: $tenant_id}
+      status: {_in: ["running", "queued"]}
+    }
+    order_by: {started_at: desc}
+  ) {
+    id
+    status
+    started_at
+    workflow {
+      id
+      name
+      project {
+        id
+        name
+      }
+    }
+  }
+}
+
+# =====================================================
+# Dashboard Activity Feed Subscriptions
+# =====================================================
+
+subscription DashboardActivityFeed($tenant_id: uuid!) {
+  audit_logs(
+    where: {tenant_id: {_eq: $tenant_id}}
+    order_by: {created_at: desc}
+    limit: 20
+  ) {
+    id
+    action
+    resource_type
+    resource_id
+    changes
+    created_at
+    user {
+      id
+      full_name
+      email
+    }
+  }
+}
+
+subscription RecentProjects($tenant_id: uuid!) {
+  projects(
+    where: {tenant_id: {_eq: $tenant_id}}
+    order_by: {updated_at: desc}
+    limit: 5
+  ) {
+    id
+    name
+    status
+    updated_at
+    agents_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+
+# =====================================================
+# Notification Subscriptions
+# =====================================================
+
+subscription UserNotifications($user_id: uuid!) {
+  user_notifications: audit_logs(
+    where: {
+      user_id: {_eq: $user_id}
+      action: {_in: ["project_created", "agent_failed", "workflow_completed", "invitation_received"]}
+    }
+    order_by: {created_at: desc}
+    limit: 10
+  ) {
+    id
+    action
+    resource_type
+    resource_id
+    metadata
+    created_at
+    read_at
+  }
+}
+
+# =====================================================
+# System Health Subscriptions
+# =====================================================
+
+subscription TenantSystemHealth($tenant_id: uuid!) {
+  agents_aggregate(
+    where: {tenant_id: {_eq: $tenant_id}, status: {_eq: "active"}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  workflow_executions_aggregate(
+    where: {
+      tenant_id: {_eq: $tenant_id}
+      status: {_eq: "running"}
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  failed_workflows: workflow_executions_aggregate(
+    where: {
+      tenant_id: {_eq: $tenant_id}
+      status: {_eq: "failed"}
+      started_at: {_gte: "now() - interval '1 hour'"}
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}
