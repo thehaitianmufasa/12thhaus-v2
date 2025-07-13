@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
 export function useAuth() {
   const { data: session, status } = useSession();
@@ -48,7 +48,7 @@ export function useRequireAuth() {
 export function useRequireRole(requiredRole: 'admin' | 'tenant_admin' | 'user') {
   const auth = useAuth();
   
-  const hasAccess = () => {
+  const hasAccess = useCallback(() => {
     if (!auth.role) return false;
     
     const roleHierarchy = {
@@ -59,13 +59,13 @@ export function useRequireRole(requiredRole: 'admin' | 'tenant_admin' | 'user') 
     
     return roleHierarchy[auth.role as keyof typeof roleHierarchy] >= 
            roleHierarchy[requiredRole];
-  };
+  }, [auth.role, requiredRole]);
 
   useEffect(() => {
     if (!auth.isLoading && (!auth.isAuthenticated || !hasAccess())) {
       window.location.href = '/unauthorized';
     }
-  }, [auth.isLoading, auth.isAuthenticated, auth.role]);
+  }, [auth.isLoading, auth.isAuthenticated, auth.role, hasAccess]);
 
   return { ...auth, hasAccess: hasAccess() };
 }

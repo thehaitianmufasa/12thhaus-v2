@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
 
 interface UserProfile {
@@ -107,7 +108,13 @@ export default function ProfileSettings() {
           <div className="flex-shrink-0">
             <div className="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center">
               {profile.avatar ? (
-                <img className="h-16 w-16 rounded-full" src={profile.avatar} alt="Avatar" />
+                <Image 
+                  className="h-16 w-16 rounded-full" 
+                  src={profile.avatar} 
+                  alt="Avatar"
+                  width={64}
+                  height={64}
+                />
               ) : (
                 <span className="text-xl font-medium text-gray-700">
                   {profile.firstName[0]}{profile.lastName[0]}

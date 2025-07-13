@@ -2,10 +2,12 @@ import Stripe from 'stripe';
 import { STRIPE_CONFIG } from './config';
 
 // Initialize Stripe on the server side
-export const stripe = new Stripe(STRIPE_CONFIG.secretKey, {
-  apiVersion: '2025-06-30.basil',
-  typescript: true,
-});
+export const stripe = STRIPE_CONFIG.secretKey 
+  ? new Stripe(STRIPE_CONFIG.secretKey, {
+      apiVersion: '2025-06-30.basil',
+      typescript: true,
+    })
+  : null;
 
 // Helper function to create a customer
 export async function createStripeCustomer(params: {
@@ -13,6 +15,10 @@ export async function createStripeCustomer(params: {
   name?: string;
   tenantId: string;
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   const customer = await stripe.customers.create({
     email: params.email,
     name: params.name,
@@ -31,6 +37,10 @@ export async function createSubscription(params: {
   tenantId: string;
   trialDays?: number;
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   const subscription = await stripe.subscriptions.create({
     customer: params.customerId,
     items: [{ price: params.priceId }],
@@ -49,6 +59,10 @@ export async function updateSubscription(params: {
   subscriptionId: string;
   priceId: string;
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   const subscription = await stripe.subscriptions.retrieve(params.subscriptionId);
   
   const updatedSubscription = await stripe.subscriptions.update(params.subscriptionId, {
@@ -69,6 +83,10 @@ export async function cancelSubscription(params: {
   subscriptionId: string;
   cancelAtPeriodEnd?: boolean;
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   if (params.cancelAtPeriodEnd) {
     return await stripe.subscriptions.update(params.subscriptionId, {
       cancel_at_period_end: true,
@@ -83,6 +101,10 @@ export async function createCustomerPortalSession(params: {
   customerId: string;
   returnUrl: string;
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   const session = await stripe.billingPortal.sessions.create({
     customer: params.customerId,
     return_url: params.returnUrl,
@@ -100,6 +122,10 @@ export async function createCheckoutSession(params: {
   tenantId: string;
   trialDays?: number;
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     mode: 'subscription',
     payment_method_types: ['card'],
@@ -137,6 +163,10 @@ export async function createCheckoutSession(params: {
 
 // Helper function to verify webhook signature
 export function verifyWebhookSignature(payload: string, signature: string) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
+  
   return stripe.webhooks.constructEvent(
     payload,
     signature,

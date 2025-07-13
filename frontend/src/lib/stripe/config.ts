@@ -1,7 +1,7 @@
 export const STRIPE_CONFIG = {
-  publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-  secretKey: process.env.STRIPE_SECRET_KEY!,
-  webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+  publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
+  secretKey: process.env.STRIPE_SECRET_KEY || '',
+  webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
 } as const;
 
 export const SUBSCRIPTION_PLANS = {
@@ -27,7 +27,7 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Pro',
     description: 'For growing teams and businesses',
     price: 49,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO!,
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO || '',
     features: [
       'Up to 10 users',
       'Up to 25 projects',
@@ -47,7 +47,7 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Enterprise',
     description: 'For large teams with advanced needs',
     price: 199,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE!,
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE || '',
     features: [
       'Unlimited users',
       'Unlimited projects',

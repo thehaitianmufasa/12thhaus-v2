@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { SUBSCRIPTION_PLANS, PlanType } from '@/lib/stripe/config';
 import { cn } from '@/lib/utils';
@@ -30,11 +30,7 @@ export default function BillingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchBillingData();
-  }, [tenantId]);
-
-  const fetchBillingData = async () => {
+  const fetchBillingData = useCallback(async () => {
     if (!tenantId) return;
 
     try {
@@ -57,7 +53,11 @@ export default function BillingPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tenantId]);
+
+  useEffect(() => {
+    fetchBillingData();
+  }, [fetchBillingData]);
 
   const handleUpgrade = async (planType: PlanType) => {
     setActionLoading('upgrade');
