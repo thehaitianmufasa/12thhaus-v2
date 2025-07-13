@@ -1,0 +1,156 @@
+# =====================================================
+# Docker Compose for Hasura + Supabase Integration
+# LangGraph Multi-Agent Platform
+# =====================================================
+
+version: '3.8'
+
+services:
+  # Hasura GraphQL Engine
+  hasura:
+    image: hasura/graphql-engine:v2.33.4
+    container_name: langgraph-hasura
+    ports:
+      - "8080:8080"
+    environment:
+      # Supabase PostgreSQL connection
+      HASURA_GRAPHQL_DATABASE_URL: ${HASURA_GRAPHQL_DATABASE_URL}
+      
+      # Hasura configuration
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: "startup, http-log, webhook-log, websocket-log, query-log"
+      HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: "/srv/console-assets"
+      
+      # CORS and security
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_ENABLE_ALLOWLIST: "false"
+      HASURA_GRAPHQL_ENABLE_REMOTE_SCHEMA_PERMISSIONS: "true"
+      
+      # Performance settings
+      HASURA_GRAPHQL_QUERY_PLAN_CACHE_SIZE: "4000"
+      HASURA_GRAPHQL_ENABLE_METADATA_QUERY_LOGGING: "false"
+      
+      # Webhook endpoints
+      HASURA_GRAPHQL_AUTH_HOOK: "http://host.docker.internal:3000/auth/webhook"
+      N8N_WEBHOOK_ENDPOINT: "http://host.docker.internal:5678/webhook"
+      
+    volumes:
+      - ../hasura-metadata:/hasura-metadata
+      - ../certs:/certs:ro
+      - ./console-assets:/srv/console-assets:ro
+    
+    depends_on:
+      - redis
+    
+    restart: unless-stopped
+    
+    networks:
+      - langgraph-network
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hasura.rule=Host(`graphql.localhost`)"
+      - "traefik.http.services.hasura.loadbalancer.server.port=8080"
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: langgraph-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: langgraph-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - hasura
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+
+  # Monitoring with Prometheus (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: langgraph-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+
+  # Grafana for monitoring dashboards (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: langgraph-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+
+# =====================================================
+# VOLUMES
+# =====================================================
+
+volumes:
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local  
+  grafana_data:
+    driver: local
+
+# =====================================================
+# NETWORKS
+# =====================================================
+
+networks:
+  langgraph-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

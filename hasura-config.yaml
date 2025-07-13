@@ -1,0 +1,682 @@
+# =====================================================
+# Hasura GraphQL Engine Configuration
+# LangGraph Multi-Agent Platform
+# Multi-Tenant Architecture with Supabase Backend
+# =====================================================
+
+version: 3
+endpoint: http://localhost:8080
+metadata_directory: hasura-metadata
+actions:
+  kind: synchronous
+  handler_webhook_baseurl: http://localhost:3000
+
+# =====================================================
+# DATABASE CONFIGURATION
+# =====================================================
+
+# Primary Supabase PostgreSQL connection
+databases:
+  - name: default
+    kind: postgres
+    configuration:
+      connection_info:
+        # Supabase connection details
+        database_url:
+          from_env: HASURA_GRAPHQL_DATABASE_URL
+        # Alternative connection parameters
+        host:
+          from_env: SUPABASE_DB_HOST
+        port:
+          from_env: SUPABASE_DB_PORT
+        username:
+          from_env: SUPABASE_DB_USER
+        password:
+          from_env: SUPABASE_DB_PASSWORD
+        database:
+          from_env: SUPABASE_DB_NAME
+        # SSL configuration for Supabase
+        ssl_configuration:
+          sslmode: require
+          sslrootcert: 
+            from_env: SUPABASE_SSL_CERT_PATH
+        # Connection pool settings
+        pool_settings:
+          max_connections: 50
+          idle_timeout: 180
+          retries: 1
+          pool_timeout: 360
+          connection_lifetime: 600
+        # Additional connection parameters
+        use_prepared_statements: true
+        isolation_level: read-committed
+    # Import all tables from multi-tenant schema
+    tables:
+      # Core tenant tables
+      - table:
+          schema: public
+          name: tenants
+      - table:
+          schema: public
+          name: tenant_users
+      - table:
+          schema: public
+          name: tenant_subscriptions
+      
+      # User management tables
+      - table:
+          schema: public
+          name: users
+      - table:
+          schema: public
+          name: user_sessions
+      - table:
+          schema: public
+          name: user_onboarding
+      
+      # Application core tables
+      - table:
+          schema: public
+          name: projects
+      - table:
+          schema: public
+          name: agents
+      - table:
+          schema: public
+          name: workflows
+      - table:
+          schema: public
+          name: workflow_executions
+      
+      # Security and API tables
+      - table:
+          schema: public
+          name: api_keys
+      - table:
+          schema: public
+          name: rate_limits
+      
+      # Audit and analytics tables
+      - table:
+          schema: public
+          name: audit_logs
+      - table:
+          schema: public
+          name: usage_metrics
+      
+      # Migration management
+      - table:
+          schema: public
+          name: schema_migrations
+      - table:
+          schema: public
+          name: migration_logs
+
+# =====================================================
+# AUTHENTICATION & AUTHORIZATION
+# =====================================================
+
+# JWT configuration for authentication
+jwt_config:
+  type: HS256
+  key:
+    from_env: HASURA_GRAPHQL_JWT_SECRET
+  claims_format: json
+  claims_key: "https://hasura.io/jwt/claims"
+  claims_map:
+    x-hasura-allowed-roles: 
+      - admin
+      - tenant_admin  
+      - user
+      - anonymous
+    x-hasura-default-role: user
+    x-hasura-user-id: sub
+    x-hasura-tenant-id: tenant_id
+
+# Admin secret for administrative access
+admin_secret:
+  from_env: HASURA_GRAPHQL_ADMIN_SECRET
+
+# =====================================================
+# SERVER CONFIGURATION
+# =====================================================
+
+# GraphQL engine settings
+graphql_engine:
+  # Enable console for development
+  enable_console: true
+  console_assets_dir: 
+    from_env: HASURA_GRAPHQL_CONSOLE_ASSETS_DIR
+  
+  # Logging configuration
+  log_level: warn
+  enabled_log_types:
+    - startup
+    - http-log
+    - webhook-log
+    - websocket-log
+    - query-log
+  
+  # Performance settings
+  enable_allowlist: false
+  cors_config:
+    allowed_origins: "*"
+    allowed_methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed_headers:
+      - Content-Type
+      - Authorization
+      - X-Requested-With
+    exposed_headers:
+      - X-Custom-Header
+  
+  # Rate limiting
+  query_plan_cache_size: 4000
+  enable_remote_schema_permissions: true
+  enable_metadata_query_logging: false
+
+# =====================================================
+# ENVIRONMENT VARIABLES
+# =====================================================
+
+# Required environment variables for Supabase connection
+env_vars:
+  # Supabase connection
+  HASURA_GRAPHQL_DATABASE_URL: "postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres"
+  SUPABASE_DB_HOST: "db.[YOUR-PROJECT-REF].supabase.co"
+  SUPABASE_DB_PORT: "5432" 
+  SUPABASE_DB_USER: "postgres"
+  SUPABASE_DB_PASSWORD: "[YOUR-SUPABASE-PASSWORD]"
+  SUPABASE_DB_NAME: "postgres"
+  
+  # SSL certificate path (download from Supabase dashboard)
+  SUPABASE_SSL_CERT_PATH: "./certs/supabase-ca-certificate.crt"
+  
+  # Hasura configuration
+  HASURA_GRAPHQL_ADMIN_SECRET: "[GENERATE-STRONG-SECRET]"
+  HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256","key":"[GENERATE-JWT-SECRET-KEY]"}'
+  HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+  HASURA_GRAPHQL_DEV_MODE: "true"
+  HASURA_GRAPHQL_ENABLED_LOG_TYPES: "startup, http-log, webhook-log, websocket-log, query-log"
+  HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: "/srv/console-assets"
+  
+  # Optional: Custom webhook endpoints
+  HASURA_GRAPHQL_AUTH_HOOK: "http://localhost:3000/auth/webhook"
+  N8N_WEBHOOK_ENDPOINT: "http://localhost:5678/webhook"
+
+# =====================================================
+# ACTIONS CONFIGURATION
+# =====================================================
+
+# Custom business logic actions
+actions:
+  - name: createProject
+    definition:
+      kind: synchronous
+      handler: http://localhost:3000/actions/create-project
+      type: mutation
+      arguments:
+        - name: input
+          type: CreateProjectInput!
+      output_type: CreateProjectOutput
+    permissions:
+      - role: user
+      - role: tenant_admin
+      - role: admin
+    comment: "Create a new project with multi-agent setup"
+
+  - name: executeWorkflow
+    definition:
+      kind: synchronous  
+      handler: http://localhost:3000/actions/execute-workflow
+      type: mutation
+      arguments:
+        - name: workflowId
+          type: uuid!
+        - name: input
+          type: JSON
+      output_type: WorkflowExecutionOutput
+    permissions:
+      - role: user
+      - role: tenant_admin
+      - role: admin
+    comment: "Execute an N8N workflow"
+
+  - name: generateApiKey
+    definition:
+      kind: synchronous
+      handler: http://localhost:3000/actions/generate-api-key
+      type: mutation
+      arguments:
+        - name: name
+          type: String!
+        - name: permissions
+          type: JSON
+      output_type: ApiKeyOutput
+    permissions:
+      - role: user
+      - role: tenant_admin
+      - role: admin
+    comment: "Generate a new API key for programmatic access"
+
+# =====================================================
+# EVENTS CONFIGURATION  
+# =====================================================
+
+# Event triggers for real-time updates
+event_triggers:
+  - name: project_created
+    definition:
+      table:
+        schema: public
+        name: projects
+      event:
+        insert:
+          columns: "*"
+      webhook: http://localhost:5678/webhook/project-created
+      headers:
+        - name: x-hasura-project-created
+          value: "true"
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 60
+    comment: "Trigger N8N workflow when project is created"
+
+  - name: workflow_executed
+    definition:
+      table:
+        schema: public
+        name: workflow_executions
+      event:
+        insert:
+          columns: "*"
+        update:
+          columns:
+            - status
+            - completed_at
+            - output_data
+      webhook: http://localhost:3000/webhooks/workflow-status
+      headers:
+        - name: x-hasura-workflow-update
+          value: "true"
+    retry_conf:
+      num_retries: 2
+      interval_sec: 5
+      timeout_sec: 30
+    comment: "Send workflow execution updates to frontend"
+
+  - name: user_onboarding_progress
+    definition:
+      table:
+        schema: public
+        name: user_onboarding
+      event:
+        update:
+          columns:
+            - current_step
+            - completion_percentage
+            - status
+      webhook: http://localhost:5678/webhook/onboarding-progress
+      headers:
+        - name: x-hasura-onboarding-update
+          value: "true"
+    retry_conf:
+      num_retries: 3
+      interval_sec: 15
+      timeout_sec: 45
+    comment: "Trigger onboarding automation workflows"
+
+# =====================================================
+# REMOTE SCHEMAS
+# =====================================================
+
+# N8N GraphQL API integration
+remote_schemas:
+  - name: n8n_api
+    definition:
+      url: http://localhost:5678/api/v1/graphql
+      headers:
+        - name: Authorization
+          value: "Bearer [N8N-API-TOKEN]"
+      timeout_seconds: 60
+    permissions:
+      - role: admin
+        definition:
+          schema: |
+            type Query {
+              workflows: [Workflow]
+              workflow(id: ID!): Workflow
+            }
+            type Mutation {
+              executeWorkflow(id: ID!, data: JSON): WorkflowExecution
+            }
+      - role: tenant_admin
+        definition:
+          schema: |
+            type Query {
+              workflows: [Workflow]
+            }
+    comment: "Integration with N8N workflow engine"
+
+# =====================================================
+# CRON TRIGGERS
+# =====================================================
+
+# Scheduled tasks
+cron_triggers:
+  - name: cleanup_expired_sessions
+    webhook: http://localhost:3000/cron/cleanup-sessions
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    headers:
+      - name: x-hasura-cron-cleanup
+        value: "sessions"
+    comment: "Daily cleanup of expired user sessions"
+
+  - name: generate_usage_reports
+    webhook: http://localhost:3000/cron/usage-reports
+    schedule: "0 0 1 * *"  # Monthly on 1st day
+    headers:
+      - name: x-hasura-cron-reports
+        value: "usage"
+    comment: "Generate monthly usage reports for tenants"
+
+  - name: check_subscription_renewals
+    webhook: http://localhost:3000/cron/subscription-check
+    schedule: "0 6 * * *"  # Daily at 6 AM
+    headers:
+      - name: x-hasura-cron-billing
+        value: "subscriptions"
+    comment: "Check and process subscription renewals"
+
+# =====================================================
+# QUERY COLLECTIONS
+# =====================================================
+
+# Pre-defined query collections for security
+query_collections:
+  - name: allowed_queries
+    definition:
+      queries:
+        - name: get_user_projects
+          query: |
+            query GetUserProjects($tenant_id: uuid!, $limit: Int = 20) {
+              projects(
+                where: {tenant_id: {_eq: $tenant_id}, status: {_neq: "archived"}}
+                order_by: {updated_at: desc}
+                limit: $limit
+              ) {
+                id
+                name
+                description
+                status
+                created_at
+                updated_at
+                tech_stack
+              }
+            }
+        
+        - name: get_workflow_executions
+          query: |
+            query GetWorkflowExecutions($tenant_id: uuid!, $workflow_id: uuid!) {
+              workflow_executions(
+                where: {tenant_id: {_eq: $tenant_id}, workflow_id: {_eq: $workflow_id}}
+                order_by: {started_at: desc}
+                limit: 50
+              ) {
+                id
+                status
+                started_at
+                completed_at
+                execution_time_ms
+                error_message
+              }
+            }
+        
+        - name: get_tenant_analytics
+          query: |
+            query GetTenantAnalytics($tenant_id: uuid!, $start_date: date!, $end_date: date!) {
+              usage_metrics(
+                where: {
+                  tenant_id: {_eq: $tenant_id}
+                  date: {_gte: $start_date, _lte: $end_date}
+                }
+                order_by: {date: desc}
+              ) {
+                metric_type
+                metric_name
+                value
+                date
+                dimensions
+              }
+            }
+
+# =====================================================
+# DEPLOYMENT CONFIGURATION
+# =====================================================
+
+# Docker deployment settings
+deployment:
+  docker:
+    image: hasura/graphql-engine:v2.33.4
+    ports:
+      - "8080:8080"
+    environment:
+      - HASURA_GRAPHQL_DATABASE_URL
+      - HASURA_GRAPHQL_ADMIN_SECRET
+      - HASURA_GRAPHQL_JWT_SECRET
+      - HASURA_GRAPHQL_ENABLE_CONSOLE
+      - HASURA_GRAPHQL_DEV_MODE
+      - HASURA_GRAPHQL_ENABLED_LOG_TYPES
+    volumes:
+      - ./hasura-metadata:/hasura-metadata
+      - ./certs:/certs
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Kubernetes deployment
+  kubernetes:
+    namespace: langgraph-platform
+    replicas: 2
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+        - host: graphql.langgraph-platform.com
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: graphql-tls
+          hosts:
+            - graphql.langgraph-platform.com
+
+# =====================================================
+# DEVELOPMENT TOOLS
+# =====================================================
+
+# CLI configuration
+cli:
+  version: v2.33.4
+  endpoint: http://localhost:8080
+  admin_secret:
+    from_env: HASURA_GRAPHQL_ADMIN_SECRET
+  skip_update_check: false
+
+# Console configuration  
+console:
+  enabled: true
+  endpoint: http://localhost:8080/console
+  admin_secret:
+    from_env: HASURA_GRAPHQL_ADMIN_SECRET
+  assets_version: v2.33.4
+
+# =====================================================
+# MONITORING & OBSERVABILITY
+# =====================================================
+
+# Monitoring configuration
+monitoring:
+  metrics:
+    enabled: true
+    endpoint: /metrics
+    prometheus_compatible: true
+  
+  health_check:
+    enabled: true
+    endpoint: /healthz
+    
+  # APM integration
+  apm:
+    enabled: false
+    jaeger:
+      endpoint: http://jaeger:14268/api/traces
+    datadog:
+      endpoint: https://api.datadoghq.com
+      api_key:
+        from_env: DATADOG_API_KEY
+
+# =====================================================
+# BACKUP & RECOVERY
+# =====================================================
+
+# Metadata backup configuration
+backup:
+  metadata:
+    enabled: true
+    schedule: "0 */6 * * *"  # Every 6 hours
+    retention_days: 30
+    storage:
+      type: s3
+      bucket: langgraph-hasura-backups
+      region: us-east-1
+      access_key:
+        from_env: AWS_ACCESS_KEY_ID
+      secret_key:
+        from_env: AWS_SECRET_ACCESS_KEY
+
+# =====================================================
+# SECURITY CONFIGURATIONS
+# =====================================================
+
+security:
+  # CORS configuration
+  cors:
+    enabled: true
+    allowed_origins:
+      - "http://localhost:3000"
+      - "https://app.langgraph-platform.com"
+      - "https://dashboard.langgraph-platform.com"
+    
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    global:
+      max_req_per_min: 1000
+    per_role:
+      user: 100
+      tenant_admin: 500
+      admin: 1000
+      anonymous: 10
+  
+  # Query depth limiting
+  query_limits:
+    depth_limit: 15
+    node_limit: 1000
+    time_limit: 30
+    batch_limit: 10
+
+# =====================================================
+# PERFORMANCE OPTIMIZATION
+# =====================================================
+
+performance:
+  # Connection pooling
+  connection_pool:
+    max_connections: 50
+    idle_timeout: 180
+    
+  # Query caching
+  query_cache:
+    enabled: true
+    max_size: "1GB"
+    ttl: 300
+    
+  # Response compression
+  compression:
+    enabled: true
+    algorithms:
+      - gzip
+      - deflate
+
+# =====================================================
+# FEATURE FLAGS
+# =====================================================
+
+features:
+  # Experimental features
+  experimental:
+    streaming_subscriptions: false
+    query_caching: true
+    
+  # Beta features  
+  beta:
+    apollo_federation: false
+    schema_stitching: false
+
+# =====================================================
+# CUSTOM TYPES & SCALARS
+# =====================================================
+
+# Custom scalar types
+custom_types:
+  scalars:
+    - name: JSON
+      definition: |
+        scalar JSON
+    - name: UUID
+      definition: |
+        scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")
+    - name: DateTime
+      definition: |
+        scalar DateTime @specifiedBy(url: "https://scalars.graphql.org/andimarek/date-time")
+
+# =====================================================
+# TESTING CONFIGURATION
+# =====================================================
+
+testing:
+  # Test database
+  test_database:
+    url: "postgresql://postgres:password@localhost:5433/langgraph_test"
+    
+  # Seed data
+  seed_data:
+    enabled: true
+    files:
+      - ./seeds/test_tenants.sql
+      - ./seeds/test_users.sql
+      - ./seeds/test_projects.sql

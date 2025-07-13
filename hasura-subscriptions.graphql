@@ -1,0 +1,844 @@
+# =====================================================
+# GraphQL Subscriptions for LangGraph Multi-Agent Platform
+# Real-time subscriptions with tenant isolation
+# =====================================================
+
+# =====================================================
+# PROJECT MANAGEMENT SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to project updates for a specific tenant
+subscription ProjectUpdates($tenant_id: uuid!) {
+  projects(
+    where: { 
+      tenant_id: { _eq: $tenant_id }
+      status: { _neq: "archived" }
+    }
+    order_by: { updated_at: desc }
+  ) {
+    id
+    name
+    description
+    status
+    project_type
+    created_by
+    created_at
+    updated_at
+    tech_stack
+    repository_url
+    deployment_url
+    metadata
+    
+    # Related data
+    created_by_user {
+      id
+      first_name
+      last_name
+      avatar_url
+    }
+    
+    agents_aggregate {
+      aggregate {
+        count
+      }
+    }
+    
+    workflows_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+
+# Subscribe to a specific project's real-time updates
+subscription ProjectDetail($project_id: uuid!, $tenant_id: uuid!) {
+  projects_by_pk(id: $project_id) @include(if: true) {
+    id
+    tenant_id @include(if: true) {
+      _eq: $tenant_id
+    }
+    name
+    description
+    status
+    project_type
+    prd_content
+    tech_stack
+    repository_url
+    deployment_url
+    vercel_project_id
+    github_repo
+    settings
+    metadata
+    created_at
+    updated_at
+    
+    # Real-time agent status
+    agents(order_by: { agent_type: asc }) {
+      id
+      agent_type
+      name
+      status
+      last_execution
+      execution_count
+      configuration
+      state
+    }
+    
+    # Real-time workflow status
+    workflows(order_by: { created_at: desc }) {
+      id
+      name
+      workflow_type
+      status
+      last_triggered
+      execution_count
+      n8n_workflow_id
+      
+      # Latest executions
+      workflow_executions(
+        order_by: { started_at: desc }
+        limit: 5
+      ) {
+        id
+        status
+        started_at
+        completed_at
+        execution_time_ms
+        error_message
+      }
+    }
+  }
+}
+
+# =====================================================
+# WORKFLOW EXECUTION SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to workflow execution updates
+subscription WorkflowExecutions($tenant_id: uuid!, $limit: Int = 50) {
+  workflow_executions(
+    where: { tenant_id: { _eq: $tenant_id } }
+    order_by: { started_at: desc }
+    limit: $limit
+  ) {
+    id
+    workflow_id
+    triggered_by
+    n8n_execution_id
+    status
+    started_at
+    completed_at
+    execution_time_ms
+    error_message
+    input_data
+    output_data
+    
+    # Workflow details
+    workflow {
+      id
+      name
+      workflow_type
+      project_id
+      
+      # Project context
+      project {
+        id
+        name
+        status
+      }
+    }
+    
+    # User who triggered
+    triggered_by_user {
+      id
+      first_name
+      last_name
+      avatar_url
+    }
+  }
+}
+
+# Subscribe to specific workflow execution status
+subscription WorkflowExecutionStatus($execution_id: uuid!, $tenant_id: uuid!) {
+  workflow_executions_by_pk(id: $execution_id) @include(if: true) {
+    id
+    tenant_id @include(if: true) {
+      _eq: $tenant_id
+    }
+    workflow_id
+    triggered_by
+    n8n_execution_id
+    status
+    started_at
+    completed_at
+    execution_time_ms
+    error_message
+    input_data
+    output_data
+    
+    workflow {
+      id
+      name
+      workflow_type
+      configuration
+      trigger_config
+    }
+  }
+}
+
+# Subscribe to workflow execution metrics
+subscription WorkflowMetrics($tenant_id: uuid!, $workflow_id: uuid!) {
+  workflow_executions_aggregate(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      workflow_id: { _eq: $workflow_id }
+    }
+  ) {
+    aggregate {
+      count
+      avg {
+        execution_time_ms
+      }
+      max {
+        execution_time_ms
+      }
+      min {
+        execution_time_ms
+      }
+    }
+    nodes {
+      status
+      started_at
+      execution_time_ms
+    }
+  }
+}
+
+# =====================================================
+# USER ONBOARDING SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to user onboarding progress
+subscription UserOnboardingProgress($user_id: uuid!, $tenant_id: uuid!) {
+  user_onboarding(
+    where: {
+      user_id: { _eq: $user_id }
+      tenant_id: { _eq: $tenant_id }
+    }
+  ) {
+    id
+    user_id
+    tenant_id
+    email
+    current_step
+    total_steps
+    checklist
+    completion_percentage
+    status
+    last_email_sent
+    completed_at
+    start_date
+    updated_at
+    
+    # User details
+    user {
+      id
+      first_name
+      last_name
+      email_verified
+      avatar_url
+    }
+  }
+}
+
+# Subscribe to tenant-wide onboarding statistics
+subscription TenantOnboardingStats($tenant_id: uuid!) {
+  user_onboarding_aggregate(
+    where: { tenant_id: { _eq: $tenant_id } }
+  ) {
+    aggregate {
+      count
+      avg {
+        completion_percentage
+        current_step
+      }
+      max {
+        completion_percentage
+      }
+    }
+    nodes {
+      status
+      completion_percentage
+      current_step
+      updated_at
+    }
+  }
+}
+
+# =====================================================
+# TENANT ACTIVITY SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to tenant activity feed
+subscription TenantActivityFeed($tenant_id: uuid!, $limit: Int = 20) {
+  audit_logs(
+    where: { 
+      tenant_id: { _eq: $tenant_id }
+      action: { _nin: ["SELECT", "VIEW"] }
+    }
+    order_by: { created_at: desc }
+    limit: $limit
+  ) {
+    id
+    user_id
+    action
+    resource_type
+    resource_id
+    created_at
+    metadata
+    
+    # User who performed the action
+    user {
+      id
+      first_name
+      last_name
+      avatar_url
+    }
+  }
+}
+
+# Subscribe to usage metrics
+subscription UsageMetrics(
+  $tenant_id: uuid!
+  $metric_types: [String!]
+  $start_date: date!
+  $end_date: date!
+) {
+  usage_metrics(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      metric_type: { _in: $metric_types }
+      date: { _gte: $start_date, _lte: $end_date }
+    }
+    order_by: { timestamp: desc }
+  ) {
+    id
+    metric_type
+    metric_name
+    value
+    dimensions
+    timestamp
+    date
+    user_id
+    
+    # User context
+    user {
+      id
+      first_name
+      last_name
+    }
+  }
+}
+
+# =====================================================
+# AGENT STATUS SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to agent status updates
+subscription AgentStatus($tenant_id: uuid!, $project_id: uuid) {
+  agents(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      project_id: { _eq: $project_id }
+      status: { _eq: "active" }
+    }
+    order_by: { last_execution: desc_nulls_last }
+  ) {
+    id
+    project_id
+    agent_type
+    name
+    description
+    status
+    last_execution
+    execution_count
+    configuration
+    state
+    created_at
+    updated_at
+    
+    # Project context
+    project {
+      id
+      name
+      status
+    }
+  }
+}
+
+# Subscribe to specific agent execution updates
+subscription AgentExecution($agent_id: uuid!, $tenant_id: uuid!) {
+  agents_by_pk(id: $agent_id) @include(if: true) {
+    id
+    tenant_id @include(if: true) {
+      _eq: $tenant_id
+    }
+    agent_type
+    name
+    status
+    last_execution
+    execution_count
+    configuration
+    state
+    
+    # Related workflow executions
+    project {
+      workflows {
+        workflow_executions(
+          where: { status: { _in: ["running", "success", "error"] } }
+          order_by: { started_at: desc }
+          limit: 10
+        ) {
+          id
+          status
+          started_at
+          completed_at
+          execution_time_ms
+          error_message
+        }
+      }
+    }
+  }
+}
+
+# =====================================================
+# API USAGE SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to API key usage
+subscription ApiKeyUsage($tenant_id: uuid!, $user_id: uuid!) {
+  api_keys(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      user_id: { _eq: $user_id }
+      status: { _eq: "active" }
+    }
+    order_by: { last_used_at: desc_nulls_last }
+  ) {
+    id
+    name
+    key_prefix
+    usage_count
+    rate_limit
+    last_used_at
+    expires_at
+    status
+    permissions
+    created_at
+  }
+}
+
+# Subscribe to rate limiting status
+subscription RateLimitStatus($tenant_id: uuid!, $api_key_id: uuid) {
+  rate_limits(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      api_key_id: { _eq: $api_key_id }
+      window_end: { _gte: "now()" }
+    }
+    order_by: { window_start: desc }
+  ) {
+    id
+    api_key_id
+    endpoint
+    requests_count
+    window_start
+    window_end
+    
+    # API key details
+    api_key {
+      id
+      name
+      rate_limit
+      status
+    }
+  }
+}
+
+# =====================================================
+# TENANT MANAGEMENT SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to tenant user changes
+subscription TenantUsers($tenant_id: uuid!) {
+  tenant_users(
+    where: { 
+      tenant_id: { _eq: $tenant_id }
+      status: { _eq: "active" }
+    }
+    order_by: { joined_at: desc }
+  ) {
+    id
+    user_id
+    role
+    permissions
+    invited_by
+    invited_at
+    joined_at
+    status
+    
+    # User details
+    user {
+      id
+      email
+      first_name
+      last_name
+      avatar_url
+      last_login_at
+      email_verified
+      status
+    }
+    
+    # Inviter details
+    invited_by_user {
+      id
+      first_name
+      last_name
+    }
+  }
+}
+
+# Subscribe to tenant subscription status
+subscription TenantSubscription($tenant_id: uuid!) {
+  tenant_subscriptions(
+    where: { tenant_id: { _eq: $tenant_id } }
+    order_by: { created_at: desc }
+    limit: 1
+  ) {
+    id
+    tenant_id
+    plan_type
+    status
+    current_period_start
+    current_period_end
+    cancel_at_period_end
+    trial_start
+    trial_end
+    stripe_subscription_id
+    stripe_customer_id
+    created_at
+    updated_at
+    
+    # Tenant details
+    tenant {
+      id
+      name
+      slug
+      plan_type
+      max_users
+      max_projects
+      max_workflows
+      status
+    }
+  }
+}
+
+# =====================================================
+# DASHBOARD SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to dashboard overview data
+subscription DashboardOverview($tenant_id: uuid!) {
+  # Project stats
+  projects_aggregate(
+    where: { 
+      tenant_id: { _eq: $tenant_id }
+      status: { _neq: "archived" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+    nodes {
+      status
+      created_at
+      updated_at
+    }
+  }
+  
+  # Workflow execution stats (last 24 hours)
+  workflow_executions_aggregate(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      started_at: { _gte: "now() - interval '24 hours'" }
+    }
+  ) {
+    aggregate {
+      count
+      avg {
+        execution_time_ms
+      }
+    }
+    nodes {
+      status
+      started_at
+      execution_time_ms
+    }
+  }
+  
+  # Active users
+  tenant_users_aggregate(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      status: { _eq: "active" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+    nodes {
+      role
+      joined_at
+      last_activity: user {
+        last_login_at
+      }
+    }
+  }
+  
+  # Recent activity
+  audit_logs(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      action: { _nin: ["SELECT", "VIEW"] }
+    }
+    order_by: { created_at: desc }
+    limit: 5
+  ) {
+    id
+    action
+    resource_type
+    created_at
+    user {
+      first_name
+      last_name
+    }
+  }
+}
+
+# =====================================================
+# NOTIFICATION SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to tenant notifications
+subscription TenantNotifications($tenant_id: uuid!, $user_id: uuid!) {
+  # Failed workflow executions
+  workflow_executions(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      status: { _eq: "error" }
+      started_at: { _gte: "now() - interval '1 hour'" }
+    }
+    order_by: { started_at: desc }
+  ) {
+    id
+    workflow_id
+    error_message
+    started_at
+    workflow {
+      name
+      project {
+        name
+      }
+    }
+  }
+  
+  # API key expiring soon
+  api_keys(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      expires_at: { 
+        _gte: "now()"
+        _lte: "now() + interval '7 days'"
+      }
+      status: { _eq: "active" }
+    }
+  ) {
+    id
+    name
+    expires_at
+    user {
+      first_name
+      last_name
+      email
+    }
+  }
+  
+  # High usage alerts
+  usage_metrics(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      metric_type: { _eq: "api_requests" }
+      date: { _eq: "today()" }
+      value: { _gte: 800 }
+    }
+    order_by: { timestamp: desc }
+    limit: 1
+  ) {
+    metric_name
+    value
+    timestamp
+  }
+}
+
+# =====================================================
+# REAL-TIME CHAT/COLLABORATION
+# =====================================================
+
+# Subscribe to project collaboration updates
+subscription ProjectCollaboration($project_id: uuid!, $tenant_id: uuid!) {
+  # Users currently viewing/editing the project
+  user_sessions(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      expires_at: { _gte: "now()" }
+      last_activity: { _gte: "now() - interval '5 minutes'" }
+      # Additional filter for project context would go in metadata
+    }
+    order_by: { last_activity: desc }
+  ) {
+    id
+    user_id
+    last_activity
+    device_info
+    
+    user {
+      id
+      first_name
+      last_name
+      avatar_url
+    }
+  }
+  
+  # Recent project changes
+  audit_logs(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      resource_type: { _in: ["projects", "workflows", "agents"] }
+      resource_id: { _eq: $project_id }
+      created_at: { _gte: "now() - interval '1 hour'" }
+    }
+    order_by: { created_at: desc }
+    limit: 10
+  ) {
+    id
+    action
+    resource_type
+    created_at
+    metadata
+    user {
+      first_name
+      last_name
+      avatar_url
+    }
+  }
+}
+
+# =====================================================
+# SYSTEM HEALTH SUBSCRIPTIONS
+# =====================================================
+
+# Subscribe to system health metrics
+subscription SystemHealth($tenant_id: uuid!) {
+  # Database connection health
+  workflow_executions_aggregate(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      started_at: { _gte: "now() - interval '5 minutes'" }
+    }
+  ) {
+    aggregate {
+      count
+      avg {
+        execution_time_ms
+      }
+    }
+  }
+  
+  # API response times
+  usage_metrics(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      metric_type: { _eq: "api_response_time" }
+      timestamp: { _gte: "now() - interval '5 minutes'" }
+    }
+    order_by: { timestamp: desc }
+    limit: 10
+  ) {
+    metric_name
+    value
+    timestamp
+    dimensions
+  }
+}
+
+# =====================================================
+# WEBHOOK TRIGGER SUBSCRIPTIONS
+# =====================================================
+
+# This subscription can trigger N8N webhooks via event triggers
+subscription WebhookTriggers($tenant_id: uuid!) {
+  # Project lifecycle events
+  projects(
+    where: { 
+      tenant_id: { _eq: $tenant_id }
+      status: { _in: ["ready", "deployed", "error"] }
+    }
+  ) {
+    id
+    name
+    status
+    deployment_url
+    updated_at
+  }
+  
+  # Workflow completion events  
+  workflow_executions(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      status: { _in: ["success", "error"] }
+    }
+    order_by: { completed_at: desc }
+    limit: 1
+  ) {
+    id
+    workflow_id
+    status
+    completed_at
+    output_data
+    error_message
+    workflow {
+      name
+      n8n_workflow_id
+    }
+  }
+  
+  # User onboarding milestones
+  user_onboarding(
+    where: {
+      tenant_id: { _eq: $tenant_id }
+      completion_percentage: { _in: [25, 50, 75, 100] }
+    }
+  ) {
+    id
+    user_id
+    completion_percentage
+    status
+    updated_at
+    user {
+      email
+      first_name
+      last_name
+    }
+  }
+}
