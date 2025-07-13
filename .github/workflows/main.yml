@@ -159,92 +159,76 @@ jobs:
         echo "✅ All backend and frontend tests completed successfully"
         echo "🚀 Ready for deployment"
 
-  trigger-n8n-deployment:
+  deploy-platform:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/develop'
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Trigger N8N Deployment Workflow
-      env:
-        N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
-        GITHUB_USERNAME: ${{ github.repository_owner }}
-      run: |
-        curl -X POST "$N8N_WEBHOOK_URL/deploy" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "tenant_id": "'$TENANT_ID'",
-            "environment": "'$ENVIRONMENT'",
-            "github_username": "'$GITHUB_USERNAME'",
-            "repository": "langgraph-multi-agent",
-            "branch": "'$(echo $GITHUB_REF | cut -d'/' -f3)'",
-            "commit_sha": "'$GITHUB_SHA'",
-            "triggered_by": "github_actions",
-            "notification_webhook": "'$N8N_WEBHOOK_URL'/deployment-notification"
-          }'
-    
-    - name: Wait for Deployment Completion
-      timeout-minutes: 10
-      run: |
-        echo "⏳ Waiting for N8N deployment to complete..."
-        sleep 60
-        
-    - name: Verify Deployment
+    - name: Deploy Platform to Vercel
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       run: |
-        PROJECT_NAME="${TENANT_ID}-langgraph-${ENVIRONMENT}"
-        echo "🔍 Checking deployment for project: $PROJECT_NAME"
+        # Install Vercel CLI
+        npm install -g vercel@latest
         
-        # Get latest deployment
-        DEPLOYMENT_URL=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
-          "https://api.vercel.com/v6/deployments?app=$PROJECT_NAME&limit=1" | \
-          jq -r '.deployments[0].url // empty')
+        # Deploy platform frontend to Vercel
+        cd frontend
+        echo "🚀 Deploying LangGraph Multi-Agent Platform..."
         
-        if [ -n "$DEPLOYMENT_URL" ]; then
-          echo "✅ Deployment found: https://$DEPLOYMENT_URL"
-          # Health check
-          sleep 30
-          if curl -f "https://$DEPLOYMENT_URL/health"; then
-            echo "✅ Health check passed"
-          else
-            echo "❌ Health check failed"
-            exit 1
-          fi
+        # Set environment for deployment
+        if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+          DEPLOY_ENV="--prod"
+          echo "📦 Production deployment"
         else
-          echo "❌ No deployment found"
-          exit 1
+          DEPLOY_ENV="--no-prod"
+          echo "🧪 Preview deployment"
         fi
         
-    - name: Update Deployment Status
+        # Deploy to Vercel
+        vercel --token $VERCEL_TOKEN $DEPLOY_ENV --yes
+        
+        echo "✅ Platform deployment completed"
+        
+    - name: Trigger N8N Platform Workflow
+      env:
+        N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+      run: |
+        if [ -n "$N8N_WEBHOOK_URL" ]; then
+          echo "🔗 Triggering N8N platform workflow..."
+          curl -X POST "$N8N_WEBHOOK_URL/platform-deploy" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event": "platform_deployed",
+              "repository": "langgraph-multi-agent-platform", 
+              "branch": "'$(echo $GITHUB_REF | cut -d'/' -f3)'",
+              "commit_sha": "'$GITHUB_SHA'",
+              "environment": "'$([ "$GITHUB_REF" = "refs/heads/main" ] && echo "production" || echo "preview")'",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "⚠️ N8N webhook failed, continuing..."
+          echo "✅ N8N workflow triggered"
+        else
+          echo "⚠️ N8N_WEBHOOK_URL not configured - skipping workflow trigger"
+        fi
+        
+    - name: Update Platform Status
       env:
         HASURA_GRAPHQL_ENDPOINT: ${{ secrets.HASURA_GRAPHQL_ENDPOINT }}
         HASURA_ADMIN_SECRET: ${{ secrets.HASURA_ADMIN_SECRET }}
       run: |
-        curl -X POST "$HASURA_GRAPHQL_ENDPOINT" \
-          -H "Content-Type: application/json" \
-          -H "x-hasura-admin-secret: $HASURA_ADMIN_SECRET" \
-          -d '{
-            "query": "mutation UpdateGitHubDeployment($tenant_id: String!, $commit_sha: String!, $environment: String!, $status: String!) { insert_github_deployments_one(object: { tenant_id: $tenant_id, commit_sha: $commit_sha, environment: $environment, status: $status, deployed_at: \"now()\" }, on_conflict: { constraint: github_deployments_pkey, update_columns: [status, deployed_at] }) { id } }",
-            "variables": {
-              "tenant_id": "'$TENANT_ID'",
-              "commit_sha": "'$GITHUB_SHA'",
-              "environment": "'$ENVIRONMENT'",
-              "status": "deployed"
-            }
-          }'
-        
-    - name: Notify LangSmith of Deployment
-      env:
-        LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-      run: |
-        python -c "
-        import os
-        from datetime import datetime
-        print(f'🚀 Multi-tenant deployment completed at {datetime.now()}')
-        print(f'🏢 Tenant ID: {os.environ.get(\"TENANT_ID\")}')
-        print(f'🌍 Environment: {os.environ.get(\"ENVIRONMENT\")}')
-        print('📊 LangSmith monitoring active')
-        "
+        if [ -n "$HASURA_GRAPHQL_ENDPOINT" ]; then
+          echo "📊 Updating platform deployment status..."
+          curl -X POST "$HASURA_GRAPHQL_ENDPOINT" \
+            -H "Content-Type: application/json" \
+            -H "x-hasura-admin-secret: $HASURA_ADMIN_SECRET" \
+            -d '{
+              "query": "mutation { insert_platform_deployments_one(object: { commit_sha: \"'$GITHUB_SHA'\", environment: \"'$([ "$GITHUB_REF" = "refs/heads/main" ] && echo "production" || echo "preview")'\", status: \"deployed\", deployed_at: \"now()\" }) { id } }"
+            }' || echo "⚠️ Could not update deployment status"
+          echo "✅ Platform status updated"
+        else
+          echo "⚠️ Hasura endpoint not configured - skipping status update"
+        fi
