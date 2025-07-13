@@ -1,10 +1,28 @@
-name: CI/CD Pipeline
+name: Multi-Tenant CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, staging, develop ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, staging, develop ]
+  workflow_dispatch:
+    inputs:
+      tenant_id:
+        description: 'Tenant ID for deployment'
+        required: true
+        type: string
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+env:
+  TENANT_ID: ${{ github.event.inputs.tenant_id || 'default' }}
+  ENVIRONMENT: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/staging' && 'staging' || 'development') }}
 
 jobs:
   test:
@@ -43,26 +61,82 @@ jobs:
         print(f'✅ System health: {health[\"system_status\"]}')
         "
 
-  deploy:
+  trigger-n8n-deployment:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: ./
-        
-    - name: Post-Deployment Health Check
+    - name: Trigger N8N Deployment Workflow
+      env:
+        N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+        GITHUB_USERNAME: ${{ github.repository_owner }}
       run: |
-        sleep 30  # Wait for deployment to stabilize
-        curl -f ${{ secrets.VERCEL_DEPLOYMENT_URL }}/health || exit 1
+        curl -X POST "$N8N_WEBHOOK_URL/deploy" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "tenant_id": "'$TENANT_ID'",
+            "environment": "'$ENVIRONMENT'",
+            "github_username": "'$GITHUB_USERNAME'",
+            "repository": "langgraph-multi-agent",
+            "branch": "'$(echo $GITHUB_REF | cut -d'/' -f3)'",
+            "commit_sha": "'$GITHUB_SHA'",
+            "triggered_by": "github_actions",
+            "notification_webhook": "'$N8N_WEBHOOK_URL'/deployment-notification"
+          }'
+    
+    - name: Wait for Deployment Completion
+      timeout-minutes: 10
+      run: |
+        echo "⏳ Waiting for N8N deployment to complete..."
+        sleep 60
+        
+    - name: Verify Deployment
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      run: |
+        PROJECT_NAME="${TENANT_ID}-langgraph-${ENVIRONMENT}"
+        echo "🔍 Checking deployment for project: $PROJECT_NAME"
+        
+        # Get latest deployment
+        DEPLOYMENT_URL=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
+          "https://api.vercel.com/v6/deployments?app=$PROJECT_NAME&limit=1" | \
+          jq -r '.deployments[0].url // empty')
+        
+        if [ -n "$DEPLOYMENT_URL" ]; then
+          echo "✅ Deployment found: https://$DEPLOYMENT_URL"
+          # Health check
+          sleep 30
+          if curl -f "https://$DEPLOYMENT_URL/health"; then
+            echo "✅ Health check passed"
+          else
+            echo "❌ Health check failed"
+            exit 1
+          fi
+        else
+          echo "❌ No deployment found"
+          exit 1
+        fi
+        
+    - name: Update Deployment Status
+      env:
+        HASURA_GRAPHQL_ENDPOINT: ${{ secrets.HASURA_GRAPHQL_ENDPOINT }}
+        HASURA_ADMIN_SECRET: ${{ secrets.HASURA_ADMIN_SECRET }}
+      run: |
+        curl -X POST "$HASURA_GRAPHQL_ENDPOINT" \
+          -H "Content-Type: application/json" \
+          -H "x-hasura-admin-secret: $HASURA_ADMIN_SECRET" \
+          -d '{
+            "query": "mutation UpdateGitHubDeployment($tenant_id: String!, $commit_sha: String!, $environment: String!, $status: String!) { insert_github_deployments_one(object: { tenant_id: $tenant_id, commit_sha: $commit_sha, environment: $environment, status: $status, deployed_at: \"now()\" }, on_conflict: { constraint: github_deployments_pkey, update_columns: [status, deployed_at] }) { id } }",
+            "variables": {
+              "tenant_id": "'$TENANT_ID'",
+              "commit_sha": "'$GITHUB_SHA'",
+              "environment": "'$ENVIRONMENT'",
+              "status": "deployed"
+            }
+          }'
         
     - name: Notify LangSmith of Deployment
       env:
@@ -71,6 +145,8 @@ jobs:
         python -c "
         import os
         from datetime import datetime
-        print(f'🚀 Deployment completed at {datetime.now()}')
+        print(f'🚀 Multi-tenant deployment completed at {datetime.now()}')
+        print(f'🏢 Tenant ID: {os.environ.get(\"TENANT_ID\")}')
+        print(f'🌍 Environment: {os.environ.get(\"ENVIRONMENT\")}')
         print('📊 LangSmith monitoring active')
         "
