@@ -37,9 +37,6 @@ pandas>=2.0.0
 pygithub>=1.59.0
 gitpython>=3.1.0
 
-# Vercel Integration
-vercel>=0.6.0
-
 # File Processing
 PyYAML>=6.0.1
 python-multipart>=0.0.6
@@ -68,4 +65,3 @@ mypy>=1.6.0
 
 # Additional utilities
 typing-extensions>=4.8.0
-asyncio>=3.4.3
