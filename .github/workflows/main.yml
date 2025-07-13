@@ -131,8 +131,8 @@ jobs:
         test -f frontend/package.json && echo "✅ package.json found" || echo "❌ package.json missing"
         
     - name: Install frontend dependencies
+      working-directory: frontend
       run: |
-        cd frontend
         pwd
         ls -la
         npm cache clean --force
@@ -140,8 +140,8 @@ jobs:
         npm install
       
     - name: Run frontend tests
+      working-directory: frontend
       run: |
-        cd frontend
         echo "✅ Running frontend validation tests..."
         # Run linting
         npm run lint || echo "⚠️ Linting issues found but continuing..."
