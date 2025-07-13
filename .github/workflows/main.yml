@@ -125,32 +125,35 @@ jobs:
         
     - name: Verify frontend files
       run: |
-        ls -la frontend/
+        pwd
+        ls -la
+        ls -la frontend/ || echo "Frontend directory not found"
         test -f frontend/package.json && echo "✅ package.json found" || echo "❌ package.json missing"
-        test -f frontend/package-lock.json && echo "✅ package-lock.json found" || echo "❌ package-lock.json missing"
         
     - name: Install frontend dependencies
-      working-directory: ./frontend
       run: |
+        cd frontend
+        pwd
+        ls -la
         npm cache clean --force
         rm -rf node_modules package-lock.json
         npm install
       
     - name: Run frontend tests
-      working-directory: ./frontend
-      env:
-        NEXT_PUBLIC_HASURA_GRAPHQL_URL: http://localhost:8080/v1/graphql
-        NEXT_PUBLIC_HASURA_GRAPHQL_WS_URL: ws://localhost:8080/v1/graphql
-        NEXTAUTH_SECRET: test-secret-for-ci
-        NEXTAUTH_URL: http://localhost:3000
-        HASURA_GRAPHQL_ADMIN_SECRET: test-admin-secret
       run: |
+        cd frontend
         echo "✅ Running frontend validation tests..."
         # Run linting
         npm run lint || echo "⚠️ Linting issues found but continuing..."
         # Run type checking
         npm run type-check || echo "⚠️ Type checking issues found but continuing..."
         echo "✅ Frontend tests completed"
+      env:
+        NEXT_PUBLIC_HASURA_GRAPHQL_URL: http://localhost:8080/v1/graphql
+        NEXT_PUBLIC_HASURA_GRAPHQL_WS_URL: ws://localhost:8080/v1/graphql
+        NEXTAUTH_SECRET: test-secret-for-ci
+        NEXTAUTH_URL: http://localhost:3000
+        HASURA_GRAPHQL_ADMIN_SECRET: test-admin-secret
 
   test:
     runs-on: ubuntu-latest
