@@ -187,6 +187,12 @@ jobs:
           echo "🧪 Preview deployment"
         fi
         
+        # Set build environment variables
+        export NEXT_PUBLIC_HASURA_GRAPHQL_URL="https://placeholder.hasura.app/v1/graphql"
+        export NEXT_PUBLIC_HASURA_GRAPHQL_WS_URL="wss://placeholder.hasura.app/v1/graphql"
+        export NEXTAUTH_SECRET="build-time-secret"
+        export NEXTAUTH_URL="https://placeholder.vercel.app"
+        
         # Deploy to Vercel
         vercel --token $VERCEL_TOKEN $DEPLOY_ENV --yes
         
