@@ -7,6 +7,7 @@ import asyncio
 import sys
 import os
 from pathlib import Path
+import pytest
 
 # Add the current directory to the path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -15,6 +16,7 @@ from main import MultiAgentSystem
 from monitoring import get_monitor
 from sop_reader import sop_reader
 
+@pytest.mark.asyncio
 async def test_system_initialization():
     """Test system initialization"""
     print("Testing system initialization...")
@@ -34,6 +36,7 @@ async def test_system_initialization():
         print(f"✗ System initialization failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_sop_system():
     """Test SOP reading system"""
     print("\nTesting SOP system...")
@@ -58,6 +61,7 @@ async def test_sop_system():
         print(f"✗ SOP system failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_task_processing():
     """Test basic task processing"""
     print("\nTesting task processing...")
@@ -83,6 +87,7 @@ async def test_task_processing():
         print(f"✗ Task processing failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_agent_routing():
     """Test agent routing logic"""
     print("\nTesting agent routing...")
@@ -115,6 +120,7 @@ async def test_agent_routing():
         print(f"✗ Agent routing test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_monitoring():
     """Test monitoring system"""
     print("\nTesting monitoring system...")
