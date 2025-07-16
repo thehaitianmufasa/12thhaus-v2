@@ -168,7 +168,7 @@ class TestCodeGenerationAgent:
         
         assert "Create a Python function" in prompt
         assert "Priority: high" in prompt
-        assert "Context: Web application context" in prompt
+        assert "Context: {'type': 'Web application context'}" in prompt
         assert "Clean, well-commented code" in prompt
         assert "Error handling" in prompt
     
@@ -285,7 +285,7 @@ class TestDeploymentAgent:
         
         assert "Deploy web application" in prompt
         assert "Priority: critical" in prompt
-        assert "Context: Production environment" in prompt
+        assert "Context: {'environment': 'Production environment'}" in prompt
         assert "Deployment strategy" in prompt
         assert "Risk assessment" in prompt
         assert "Rollback procedures" in prompt
@@ -378,7 +378,7 @@ class TestBusinessIntelligenceAgent:
         
         assert "Analyze sales data" in prompt
         assert "Priority: high" in prompt
-        assert "Context: Q3 performance review" in prompt
+        assert "Context: {'period': 'Q3 performance review'}" in prompt
         assert "Data analysis approach" in prompt
         assert "Key metrics and KPIs" in prompt
         assert "actionable business insights" in prompt
@@ -463,7 +463,7 @@ class TestCustomerOperationsAgent:
         
         assert "Handle customer complaint" in prompt
         assert "Priority: urgent" in prompt
-        assert "Context: Premium customer" in prompt
+        assert "Context: {'customer_type': 'Premium customer'}" in prompt
         assert "Customer-focused solution" in prompt
         assert "professional tone" in prompt
     
@@ -558,7 +558,7 @@ class TestMarketingAutomationAgent:
         
         assert "Create email campaign" in prompt
         assert "Priority: medium" in prompt
-        assert "Context: Product launch" in prompt
+        assert "Context: {'campaign': 'Product launch'}" in prompt
         assert "Marketing strategy" in prompt
         assert "engagement and conversion" in prompt
     
