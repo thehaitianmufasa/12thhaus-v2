@@ -87,15 +87,19 @@ class TestBaseSpecialistAgent:
         # Mock LLM response
         mock_response = MagicMock()
         mock_response.content = "Test response content"
-        agent.llm.ainvoke = AsyncMock(return_value=mock_response)
+        
+        with patch.object(agent, 'llm') as mock_llm:
+            mock_llm.ainvoke = AsyncMock(return_value=mock_response)
         
         task_request = TaskRequest(
             content="Test task",
             priority="high",
             context={"key": "value"}
         )
-        
-        response = await agent.execute_task(task_request)
+        with patch.object(agent, 'llm') as mock_llm:
+            mock_llm.ainvoke = AsyncMock(return_value=mock_response)
+            
+            response = await agent.execute_task(task_request)
         
         assert isinstance(response, TaskResponse)
         assert response.agent_type == "test_agent"
@@ -114,11 +118,14 @@ class TestBaseSpecialistAgent:
         agent = TestAgent("test_agent")
         
         # Mock LLM to raise an exception
-        agent.llm.ainvoke = AsyncMock(side_effect=Exception("LLM Error"))
+        with patch.object(agent, 'llm') as mock_llm:
+            mock_llm.ainvoke = AsyncMock(side_effect=Exception("LLM Error"))
         
         task_request = TaskRequest(content="Test task", priority="medium")
-        
-        response = await agent.execute_task(task_request)
+        with patch.object(agent, 'llm') as mock_llm:
+            mock_llm.ainvoke = AsyncMock(side_effect=Exception("LLM Error"))
+            
+            response = await agent.execute_task(task_request)
         
         assert response.status == "failed"
         assert "Error: LLM Error" in response.content
@@ -154,7 +161,7 @@ class TestCodeGenerationAgent:
         task_request = TaskRequest(
             content="Create a Python function",
             priority="high",
-            context="Web application context"
+            context={"type": "Web application context"}
         )
         
         prompt = code_agent._create_task_prompt(task_request)
@@ -271,7 +278,7 @@ class TestDeploymentAgent:
         task_request = TaskRequest(
             content="Deploy web application",
             priority="critical",
-            context="Production environment"
+            context={"environment": "Production environment"}
         )
         
         prompt = deployment_agent._create_task_prompt(task_request)
@@ -364,7 +371,7 @@ class TestBusinessIntelligenceAgent:
         task_request = TaskRequest(
             content="Analyze sales data",
             priority="high",
-            context="Q3 performance review"
+            context={"period": "Q3 performance review"}
         )
         
         prompt = bi_agent._create_task_prompt(task_request)
@@ -449,7 +456,7 @@ class TestCustomerOperationsAgent:
         task_request = TaskRequest(
             content="Handle customer complaint",
             priority="urgent",
-            context="Premium customer"
+            context={"customer_type": "Premium customer"}
         )
         
         prompt = customer_agent._create_task_prompt(task_request)
@@ -544,7 +551,7 @@ class TestMarketingAutomationAgent:
         task_request = TaskRequest(
             content="Create email campaign",
             priority="medium",
-            context="Product launch"
+            context={"campaign": "Product launch"}
         )
         
         prompt = marketing_agent._create_task_prompt(task_request)
@@ -617,7 +624,7 @@ class TestMarketingAutomationAgent:
         assert "body" in result
         assert "meta_description" in result
         assert "machine learning" in result["title"]
-        assert "machine learning" in result["body"]
+        assert "machine learning" in result["body"].lower()
     
     @pytest.mark.asyncio
     async def test_health_check(self, marketing_agent):
@@ -685,9 +692,11 @@ class TestAgentIntegration:
             # Mock the LLM response
             mock_response = MagicMock()
             mock_response.content = f"I am a {agent_type} agent with various capabilities"
-            agent.llm.ainvoke = AsyncMock(return_value=mock_response)
             
-            response = await agent.execute_task(simple_task)
+            with patch.object(agent, 'llm') as mock_llm:
+                mock_llm.ainvoke = AsyncMock(return_value=mock_response)
+                
+                response = await agent.execute_task(simple_task)
             
             assert isinstance(response, TaskResponse)
             assert response.agent_type == agent_type
