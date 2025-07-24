@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCustomerPortalSession } from '@/lib/stripe/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-config';
+import { requireTenantAccess, createErrorResponse } from '@/lib/server-auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.tenantId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { tenantId } = await request.json();
-
-    if (tenantId !== session.user.tenantId) {
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
-      );
+    
+    if (!tenantId) {
+      return createErrorResponse('Tenant ID is required', 400);
     }
+
+    // Verify user has access to this tenant
+    const user = await requireTenantAccess(tenantId, request);
 
     // TODO: Fetch the Stripe customer ID from your database
     // For now, we'll use a mock customer ID
@@ -47,9 +37,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Customer portal session creation failed:', error);
-    return NextResponse.json(
-      { error: 'Failed to create customer portal session' },
-      { status: 500 }
-    );
+    
+    // If it's already a Response (from auth check), return it
+    if (error instanceof Response) {
+      return error;
+    }
+    
+    return createErrorResponse('Failed to create customer portal session');
   }
 }

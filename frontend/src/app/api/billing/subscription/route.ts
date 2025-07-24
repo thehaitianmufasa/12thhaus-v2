@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-config';
+import { requireTenantAccess, createErrorResponse } from '@/lib/server-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.tenantId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { searchParams } = new URL(request.url);
     const tenantId = searchParams.get('tenantId');
 
-    if (tenantId !== session.user.tenantId) {
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
-      );
+    if (!tenantId) {
+      return createErrorResponse('Tenant ID is required', 400);
     }
+
+    // Verify user has access to this tenant
+    const user = await requireTenantAccess(tenantId, request);
 
     // TODO: Implement GraphQL query to fetch subscription data
     // Example query:
@@ -62,9 +52,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(mockSubscription);
   } catch (error) {
     console.error('Failed to fetch subscription:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch subscription' },
-      { status: 500 }
-    );
+    
+    // If it's already a Response (from auth check), return it
+    if (error instanceof Response) {
+      return error;
+    }
+    
+    return createErrorResponse('Failed to fetch subscription');
   }
 }

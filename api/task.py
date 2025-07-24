@@ -14,7 +14,27 @@ try:
 except ImportError:
     pass
 
+# Import auth decorators separately to ensure they're available
+try:
+    from auth.vercel_auth import authenticated_vercel, optional_auth_vercel, handle_cors_preflight
+    from config import Config
+except ImportError as e:
+    print(f"Warning: Auth imports failed: {e}")
+    # Define dummy decorators for compatibility
+    def authenticated_vercel(f):
+        return f
+    def optional_auth_vercel(f):
+        return f
+    def handle_cors_preflight(handler):
+        handler.send_response(200)
+        handler.end_headers()
+
 class handler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests."""
+        handle_cors_preflight(self)
+    
+    @authenticated_vercel
     def do_POST(self):
         try:
             # Read the request body
@@ -31,6 +51,14 @@ class handler(BaseHTTPRequestHandler):
             task_content = data.get('task')
             priority = data.get('priority', 'medium')
             context = data.get('context', {})
+            
+            # Add user context if authenticated
+            if hasattr(self, 'user_id') and self.user_id:
+                context['user_id'] = self.user_id
+                context['user_email'] = self.user_email
+                if hasattr(self, 'organization_id') and self.organization_id:
+                    context['organization_id'] = self.organization_id
+                    context['organization_role'] = self.organization_role
             
             if not task_content:
                 self.send_error_response(400, "Task content is required")
@@ -62,12 +90,16 @@ class handler(BaseHTTPRequestHandler):
                     "task": task_content,
                     "priority": priority,
                     "response": response,
-                    "context": context
+                    "context": context,
+                    "user_id": getattr(self, 'user_id', None),
+                    "organization_id": getattr(self, 'organization_id', None)
                 }
                 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+                self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Organization-Id')
                 self.end_headers()
                 
                 self.wfile.write(json.dumps(response_data, indent=2).encode())
@@ -78,6 +110,7 @@ class handler(BaseHTTPRequestHandler):
         except Exception as e:
             self.send_error_response(500, f"Request handling failed: {str(e)}")
     
+    @optional_auth_vercel
     def do_GET(self):
         # Simple GET endpoint for testing
         response_data = {
@@ -87,12 +120,20 @@ class handler(BaseHTTPRequestHandler):
                 "task": "Your task description",
                 "priority": "high|medium|low",
                 "context": {}
-            }
+            },
+            "authentication_required": True,
+            "authenticated": getattr(self, 'is_authenticated', False)
         }
+        
+        if hasattr(self, 'user_id') and self.user_id:
+            response_data['user_id'] = self.user_id
+            response_data['organization_id'] = getattr(self, 'organization_id', None)
         
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Organization-Id')
         self.end_headers()
         
         self.wfile.write(json.dumps(response_data, indent=2).encode())
@@ -101,6 +142,8 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(status_code)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Organization-Id')
         self.end_headers()
         
         error_response = {

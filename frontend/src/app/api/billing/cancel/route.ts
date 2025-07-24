@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-config';
+import { requireTenantAccess, createErrorResponse } from '@/lib/server-auth';
 import { cancelSubscription } from '@/lib/stripe/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.tenantId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { tenantId } = await request.json();
 
-    if (tenantId !== session.user.tenantId) {
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
-      );
+    if (!tenantId) {
+      return createErrorResponse('Tenant ID is required', 400);
     }
+
+    // Verify user has access to this tenant
+    const user = await requireTenantAccess(tenantId, request);
 
     // TODO: Fetch the subscription ID from the database
     // Example query:
@@ -76,9 +66,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to cancel subscription:', error);
-    return NextResponse.json(
-      { error: 'Failed to cancel subscription' },
-      { status: 500 }
-    );
+    
+    // If it's already a Response (from auth check), return it
+    if (error instanceof Response) {
+      return error;
+    }
+    
+    return createErrorResponse('Failed to cancel subscription');
   }
 }

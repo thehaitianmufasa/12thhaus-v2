@@ -48,7 +48,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
       console.log('Creating project:', {
         ...formData,
         tenant_id: tenantId,
-        created_by: user?.id,
+        created_by: user?.sub,
         status: 'active',
       });
 

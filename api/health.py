@@ -14,7 +14,23 @@ except ImportError:
     # Fallback for deployment
     pass
 
+# Import auth decorators separately
+try:
+    from auth.vercel_auth import optional_auth_vercel, handle_cors_preflight
+except ImportError:
+    # Define dummy decorators for compatibility
+    def optional_auth_vercel(f):
+        return f
+    def handle_cors_preflight(handler):
+        handler.send_response(200)
+        handler.end_headers()
+
 class handler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests."""
+        handle_cors_preflight(self)
+    
+    @optional_auth_vercel
     def do_GET(self):
         try:
             # Basic health check
@@ -22,8 +38,16 @@ class handler(BaseHTTPRequestHandler):
                 "status": "healthy",
                 "timestamp": datetime.now().isoformat(),
                 "service": "langgraph-multi-agent",
-                "version": "1.0.0"
+                "version": "1.0.0",
+                "authenticated": getattr(self, 'is_authenticated', False)
             }
+            
+            # Add user context if authenticated
+            if hasattr(self, 'user_id') and self.user_id:
+                health_data.update({
+                    "user_id": self.user_id,
+                    "organization_id": getattr(self, 'organization_id', None)
+                })
             
             # Try to get system health if monitoring is available
             try:
@@ -39,6 +63,8 @@ class handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Organization-Id')
             self.end_headers()
             
             self.wfile.write(json.dumps(health_data, indent=2).encode())
@@ -46,6 +72,9 @@ class handler(BaseHTTPRequestHandler):
         except Exception as e:
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Organization-Id')
             self.end_headers()
             
             error_response = {

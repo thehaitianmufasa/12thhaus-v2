@@ -1,14 +1,13 @@
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
-import { signOut } from 'next-auth/react';
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
 }
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
-  const { user, tenantName } = useAuth();
+  const { user, tenantName, signOut } = useAuth();
 
   return (
     <div className="sticky top-0 z-10 bg-white shadow">
@@ -58,7 +57,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                 </div>
                 
                 <button
-                  onClick={() => signOut({ callbackUrl: '/auth/login' })}
+                  onClick={() => signOut('/')}
                   className="flex items-center gap-x-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">

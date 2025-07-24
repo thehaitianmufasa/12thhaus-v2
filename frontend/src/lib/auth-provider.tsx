@@ -1,7 +1,8 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
+import { LogtoProvider } from '@logto/react';
 import { ReactNode } from 'react';
+import { reactLogtoConfig } from './logto-config';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -9,8 +10,8 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   return (
-    <SessionProvider>
+    <LogtoProvider config={reactLogtoConfig}>
       {children}
-    </SessionProvider>
+    </LogtoProvider>
   );
 }
