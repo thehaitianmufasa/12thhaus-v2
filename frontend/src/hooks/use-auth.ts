@@ -2,28 +2,7 @@
 
 import { useLogto } from '@logto/react';
 import { useEffect, useCallback, useState } from 'react';
-import { generateHasuraJWT, hasRole, hasOrganizationAccess } from '@/lib/logto-config.js';
-
-interface UserInfo {
-  sub: string;
-  email?: string;
-  name?: string;
-  picture?: string;
-  organizations?: Organization[];
-  roles?: string[];
-  custom_data?: {
-    tenant_id?: string;
-    role?: string;
-    permissions?: string[];
-  };
-}
-
-interface Organization {
-  id: string;
-  name: string;
-  role: 'admin' | 'tenant_admin' | 'user';
-  permissions?: string[];
-}
+import { generateHasuraJWT, hasRole, hasOrganizationAccess, UserInfo, Organization } from '@/lib/logto-config';
 
 export function useAuth() {
   const { isAuthenticated, isLoading, getAccessToken, signIn, signOut, getIdTokenClaims, fetchUserInfo } = useLogto();

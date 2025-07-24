@@ -2,7 +2,7 @@
 
 import { LogtoProvider } from '@logto/react';
 import { ReactNode } from 'react';
-import { reactLogtoConfig } from './logto-config.js';
+import { reactLogtoConfig } from './logto-config';
 
 interface AuthProviderProps {
   children: ReactNode;

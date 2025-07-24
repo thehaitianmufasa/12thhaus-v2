@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { logtoConfig } from './logto-config.js';
+import { logtoConfig } from './logto-config';
 import { redirect } from 'next/navigation';
 
 interface AuthenticatedUser {
