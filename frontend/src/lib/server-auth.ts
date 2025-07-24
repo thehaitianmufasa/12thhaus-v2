@@ -106,11 +106,16 @@ export function createErrorResponse(message: string, status: number = 500) {
  * Use this in page components (not API routes)
  */
 export async function redirectToLoginIfNotAuthenticated() {
-  const user = await getAuthenticatedUser();
-  
-  if (!user) {
+  try {
+    const user = await getAuthenticatedUser();
+    
+    if (!user) {
+      redirect('/auth/login');
+    }
+    
+    return user;
+  } catch (error) {
+    console.error('Authentication check failed:', error);
     redirect('/auth/login');
   }
-  
-  return user;
 }

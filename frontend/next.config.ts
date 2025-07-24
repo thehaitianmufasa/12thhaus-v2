@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  env: {
+    // Map server-side Logto variables to client-side for build time
+    NEXT_PUBLIC_LOGTO_ENDPOINT: process.env.LOGTO_ENDPOINT,
+    NEXT_PUBLIC_LOGTO_APP_ID: process.env.LOGTO_APP_ID,
+    // Note: LOGTO_APP_SECRETS should never be exposed to client
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['@logto/next']
+  }
 };
 
 export default nextConfig;
