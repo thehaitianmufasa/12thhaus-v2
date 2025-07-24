@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getLogtoContext } from '@logto/next';
 import { logtoConfig } from './logto-config';
 import { redirect } from 'next/navigation';
 
