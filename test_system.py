@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for the LangGraph Multi-Agent System
+Test script for the 12thhaus Spiritual Platform
 Run basic tests to verify system functionality
 """
 import asyncio
@@ -148,7 +148,7 @@ async def test_monitoring():
 
 async def run_all_tests():
     """Run all tests"""
-    print("=== LangGraph Multi-Agent System Tests ===\n")
+    print("=== 12thhaus Spiritual Platform Tests ===\n")
     
     tests = [
         test_system_initialization,
@@ -182,7 +182,7 @@ async def run_all_tests():
 
 def main():
     """Main test runner"""
-    print("Starting LangGraph Multi-Agent System tests...")
+    print("Starting 12thhaus Spiritual Platform tests...")
     
     # Check if .env file exists
     if not os.path.exists(".env"):

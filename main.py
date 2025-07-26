@@ -1,5 +1,5 @@
 """
-Main application for LangGraph Multi-Agent System
+Main application for 12thhaus Spiritual Platform
 Provides CLI interface and demonstrates system capabilities
 """
 import asyncio
@@ -75,7 +75,7 @@ class MultiAgentSystem:
 
 async def run_cli():
     """Run the CLI interface"""
-    parser = argparse.ArgumentParser(description="LangGraph Multi-Agent System")
+    parser = argparse.ArgumentParser(description="12thhaus Spiritual Platform")
     parser.add_argument("command", choices=["task", "status", "demo", "interactive"], 
                        help="Command to run")
     parser.add_argument("--task", type=str, help="Task to process")
@@ -129,7 +129,7 @@ async def run_cli():
 
 async def run_demo(system: MultiAgentSystem):
     """Run a demonstration of the multi-agent system"""
-    print("=== LangGraph Multi-Agent System Demo ===\n")
+    print("=== 12thhaus Spiritual Platform Demo ===\n")
     
     demo_tasks = [
         {

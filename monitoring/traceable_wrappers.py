@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MCP Server Traceable Wrappers for LangGraph Multi-Agent Platform
+MCP Server Traceable Wrappers for 12thhaus Spiritual Platform
 Enhanced tracing for all MCP operations in the multi-agent system.
 """
 
@@ -12,11 +12,11 @@ from langsmith import Client
 
 class TraceableMCPIntegration:
     """
-    Traceable wrappers for MCP servers in the LangGraph Multi-Agent Platform.
+    Traceable wrappers for MCP servers in the 12thhaus Spiritual Platform.
     Provides comprehensive monitoring for all agent operations.
     """
     
-    def __init__(self, project_name: str = "langgraph-multi-agent-platform"):
+    def __init__(self, project_name: str = "12thhaus-spiritual-platform"):
         self.client = Client()
         self.project_name = project_name
         self._setup_environment()
@@ -254,7 +254,7 @@ class AgentWorkflowTracer:
 
 # Example usage
 if __name__ == "__main__":
-    print("🚀 LangGraph Multi-Agent Platform - Enhanced Tracing")
+    print("🚀 12thhaus Spiritual Platform - Enhanced Tracing")
     print("=" * 60)
     
     # Initialize tracing

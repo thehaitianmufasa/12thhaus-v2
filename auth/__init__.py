@@ -1,6 +1,6 @@
 """
-Authentication module for LangGraph Multi-Agent Platform
-Provides Logto integration for enterprise multi-tenant authentication
+Authentication module for 12thhaus Spiritual Platform
+Provides Logto integration for spiritual community authentication
 """
 
 from .logto_config import LogtoConfig, get_logto_client

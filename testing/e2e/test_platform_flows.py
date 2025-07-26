@@ -1,5 +1,5 @@
 """
-End-to-End Tests for LangGraph Multi-Agent Platform
+End-to-End Tests for 12thhaus Spiritual Platform
 Tests complete user journeys and platform workflows
 """
 import pytest
@@ -22,7 +22,7 @@ class TestPlatformE2E:
             browser = await p.chromium.launch(headless=True)
             context = await browser.new_context(
                 viewport={'width': 1920, 'height': 1080},
-                user_agent='LangGraph-E2E-Test/1.0'
+                user_agent='12thhaus-E2E-Test/1.0'
             )
             yield context
             await browser.close()

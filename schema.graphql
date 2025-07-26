@@ -1,0 +1,81 @@
+
+# 12thhaus Spiritual Platform GraphQL Schema
+# Generated for PRP 2.3 Local Development
+
+type SpiritualDiscipline {
+  id: String!
+  name: String!
+  category: String!
+  description: String
+  typical_duration_minutes: Int
+  typical_price_range_min: Float
+  typical_price_range_max: Float
+  created_at: String
+  updated_at: String
+}
+
+type User {
+  id: String!
+  email: String!
+  full_name: String!
+  user_type: String!
+  is_active: Boolean!
+  created_at: String!
+  updated_at: String!
+}
+
+type Practitioner {
+  id: String!
+  user_id: String!
+  business_name: String
+  bio: String
+  years_experience: Int
+  verification_status: String!
+  hourly_rate: Float
+  location: String
+  created_at: String!
+  updated_at: String!
+  user: User
+}
+
+type SpiritualService {
+  id: String!
+  practitioner_id: String!
+  discipline_id: String!
+  title: String!
+  description: String
+  base_price: Float!
+  duration_minutes: Int!
+  is_active: Boolean!
+  created_at: String!
+  updated_at: String!
+  practitioner: Practitioner
+  spiritual_discipline: SpiritualDiscipline
+}
+
+type Query {
+  # Spiritual Disciplines
+  spiritual_disciplines(limit: Int, offset: Int): [SpiritualDiscipline!]!
+  spiritual_discipline(id: String!): SpiritualDiscipline
+  
+  # Users
+  users(limit: Int, offset: Int): [User!]!
+  user(id: String!): User
+  
+  # Practitioners  
+  practitioners(limit: Int, offset: Int): [Practitioner!]!
+  practitioner(id: String!): Practitioner
+  
+  # Spiritual Services
+  spiritual_services(limit: Int, offset: Int): [SpiritualService!]!
+  spiritual_service(id: String!): SpiritualService
+}
+
+# Aggregate types for counting
+type SpiritualDisciplineAggregate {
+  count: Int!
+}
+
+type QueryAggregates {
+  spiritual_disciplines_aggregate: SpiritualDisciplineAggregate!
+}

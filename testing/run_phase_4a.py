@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Test Runner for LangGraph Multi-Agent Platform
+Comprehensive Test Runner for 12thhaus Spiritual Platform
 Phase 4A Testing Orchestration
 """
 import os

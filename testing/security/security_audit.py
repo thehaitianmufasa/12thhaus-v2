@@ -1,5 +1,5 @@
 """
-Security Testing Suite for LangGraph Multi-Agent Platform
+Security Testing Suite for 12thhaus Spiritual Platform
 OWASP Top 10 and comprehensive security audit
 """
 import pytest
@@ -37,7 +37,7 @@ class SecurityAuditor:
     
     async def run_full_audit(self):
         """Execute complete security audit"""
-        print("🔒 Starting Security Audit for LangGraph Platform\n")
+        print("🔒 Starting Security Audit for 12thhaus Platform\n")
         
         # OWASP Top 10 Tests
         await self.test_injection_vulnerabilities()
@@ -426,7 +426,7 @@ class SecurityAuditor:
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LangGraph Security Audit Report</title>
+    <title>12thhaus Security Audit Report</title>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }}
         .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 20px; }}
@@ -444,7 +444,7 @@ class SecurityAuditor:
 </head>
 <body>
     <div class="container">
-        <h1>🔒 LangGraph Platform Security Audit Report</h1>
+        <h1>🔒 12thhaus Platform Security Audit Report</h1>
         <div class="summary">
             <h2>Summary</h2>
             <p>Generated: {self.test_results['timestamp']}</p>

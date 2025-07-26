@@ -211,7 +211,7 @@
       "parameters": {
         "webhook_url": "${DISCORD_WEBHOOK_URL}",
         "content": "🚨 **CRITICAL ERROR** in {{$json.tenant_name || 'System'}}\n\n**Error:** {{$json.error_message}}\n**Category:** {{$json.category}}\n**Source:** {{$json.source}}\n**Time:** {{$json.timestamp}}\n**Alert ID:** {{$json.alert_id}}\n\n@everyone - Critical attention needed!",
-        "username": "LangGraph Critical Alerts",
+        "username": "12thhaus Critical Alerts",
         "avatar_url": "${DISCORD_BOT_AVATAR_URL}"
       },
       "name": "Critical Discord Alert",

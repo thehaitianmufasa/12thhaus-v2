@@ -1,5 +1,5 @@
 """
-Authentication and authorization decorators for the LangGraph Multi-Agent Platform.
+Authentication and authorization decorators for the 12thhaus Spiritual Platform.
 
 This module provides decorators for protecting API endpoints with authentication
 and role-based access control.

@@ -1,7 +1,7 @@
-# Logto Integration Plan for LangGraph Multi-Agent Platform
+# Logto Integration Plan for 12thhaus Spiritual Platform
 
 ## Overview
-Adding enterprise-grade multi-tenant authentication to the LangGraph platform using Logto for organization management, RBAC, and secure API access.
+Adding enterprise-grade multi-tenant authentication to the 12thhaus platform using Logto for organization management, RBAC, and secure API access.
 
 ## Architecture Changes
 
@@ -22,7 +22,7 @@ Organization (Customer)
 
 ### 3. File Structure Changes
 ```
-langgraph-multi-agent-platform/
+12thhaus-spiritual-platform/
 ├── auth/
 │   ├── __init__.py
 │   ├── logto_config.py      # Logto configuration

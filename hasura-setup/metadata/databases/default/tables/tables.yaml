@@ -1,0 +1,27 @@
+# 12thhaus v2.0 Spiritual Platform Tables
+# All tables in 'twelthhaus' schema
+
+# Core user and practitioner tables
+- "!include twelthhaus_users.yaml"
+- "!include twelthhaus_practitioners.yaml"
+- "!include twelthhaus_user_spiritual_preferences.yaml"
+
+# Spiritual service and discipline tables  
+- "!include twelthhaus_spiritual_disciplines.yaml"
+- "!include twelthhaus_spiritual_services.yaml"
+- "!include twelthhaus_spiritual_bookings.yaml"
+- "!include twelthhaus_spiritual_reviews.yaml"
+
+# Community and social tables
+- "!include twelthhaus_community_posts.yaml"
+- "!include twelthhaus_community_comments.yaml"
+- "!include twelthhaus_community_engagements.yaml"
+
+# Communication tables
+- "!include twelthhaus_conversations.yaml"
+- "!include twelthhaus_messages.yaml"
+
+# Personal growth and payments
+- "!include twelthhaus_spiritual_journey_entries.yaml"
+- "!include twelthhaus_payment_transactions.yaml"
+- "!include twelthhaus_notifications.yaml"

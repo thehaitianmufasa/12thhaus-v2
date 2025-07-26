@@ -1,4 +1,4 @@
-# GraphQL Test Suite for LangGraph Multi-Agent Platform
+# GraphQL Test Suite for 12thhaus Spiritual Platform
 ## Multi-Tenant Data Isolation & Permission Verification
 
 **Date**: July 13, 2025  

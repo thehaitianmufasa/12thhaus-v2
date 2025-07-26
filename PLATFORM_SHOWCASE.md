@@ -1,4 +1,4 @@
-# LangGraph Multi-Agent Platform - Live Showcase
+# 12thhaus Spiritual Platform - Live Showcase
 
 ## 🚀 One Command to Build Complete SaaS Applications
 
@@ -63,7 +63,7 @@ Your PRD → Master Agent → Orchestrates 5 Specialist Agents
 
 ### ROI Calculator
 
-| Traditional Development | LangGraph Platform | Your Savings |
+| Traditional Development | 12thhaus Platform | Your Savings |
 |------------------------|-------------------|--------------|
 | Timeline: 6 months | Timeline: 48 hours | 98% faster |
 | Cost: $200,000-500,000 | Cost: $2,500/month | 95% cheaper |
@@ -156,4 +156,4 @@ Your PRD → Master Agent → Orchestrates 5 Specialist Agents
 
 ---
 
-*"We built our entire platform in 3 days with LangGraph. What used to take 6 months and $500K now takes a weekend and $2,500." - CTO, TechStartup*
+*"We built our entire platform in 3 days with 12thhaus. What used to take 6 months and $500K now takes a weekend and $2,500." - CTO, TechStartup*

@@ -176,7 +176,7 @@ jobs:
         
         # Deploy platform frontend to Vercel
         cd frontend
-        echo "🚀 Deploying LangGraph Multi-Agent Platform..."
+        echo "🚀 Deploying 12thhaus Spiritual Platform..."
         
         # Set environment for deployment
         if [ "$GITHUB_REF" = "refs/heads/main" ]; then
@@ -208,7 +208,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{
               "event": "platform_deployed",
-              "repository": "langgraph-multi-agent-platform", 
+              "repository": "12thhaus-spiritual-platform", 
               "branch": "'$(echo $GITHUB_REF | cut -d'/' -f3)'",
               "commit_sha": "'$GITHUB_SHA'",
               "environment": "'$([ "$GITHUB_REF" = "refs/heads/main" ] && echo "production" || echo "preview")'",

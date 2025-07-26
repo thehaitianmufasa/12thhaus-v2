@@ -1,22 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Crimson_Text } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth-provider";
-import { ApolloWrapper } from "@/lib/apollo-provider";
+import SpiritualApolloProvider from "../lib/apollo-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Spiritual Typography System
+const spiritualSans = Inter({
+  variable: "--font-spiritual-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spiritualSerif = Crimson_Text({
+  variable: "--font-spiritual-serif", 
   subsets: ["latin"],
+  weight: ["400", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "LangGraph Multi-Agent Platform",
-  description: "Enterprise multi-tenant agent automation platform",
+  title: "12thhaus - Find Your Perfect Spiritual Guide",
+  description: "Connect with authentic spiritual practitioners for tarot, astrology, energy healing, and transformative guidance. Your spiritual journey starts here.",
 };
 
 export default function RootLayout({
@@ -25,15 +29,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="spiritual-sanctuary">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${spiritualSans.variable} ${spiritualSerif.variable} antialiased spiritual-foundation`}
       >
-        <AuthProvider>
-          <ApolloWrapper>
-            {children}
-          </ApolloWrapper>
-        </AuthProvider>
+        <SpiritualApolloProvider>
+          {children}
+        </SpiritualApolloProvider>
       </body>
     </html>
   );

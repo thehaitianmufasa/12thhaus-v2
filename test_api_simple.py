@@ -25,7 +25,7 @@ def test_health_endpoint():
         health_data = {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
-            "service": "langgraph-multi-agent",
+            "service": "12thhaus-spiritual",
             "version": "1.0.0"
         }
         

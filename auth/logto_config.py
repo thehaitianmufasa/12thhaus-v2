@@ -1,5 +1,5 @@
 """
-Logto Configuration for LangGraph Multi-Agent Platform
+Logto Configuration for 12thhaus Spiritual Platform
 Handles authentication client setup and configuration
 """
 import os

@@ -1,7 +1,7 @@
 # 🏢 LANGGRAPH MULTI-AGENT PLATFORM: COMPREHENSIVE PROJECT REFERENCE
 
 ## 📋 PROJECT OVERVIEW
-**Repository:** https://github.com/thehaitianmufasa/langgraph-multi-agent-platform  
+**Repository:** https://github.com/thehaitianmufasa/12thhaus-spiritual-platform  
 **Owner:** Jeff Chery (@jeffchery) - The Haitian Mufasa  
 **Status:** Production-Ready Enterprise Platform (82%+ Test Coverage)  
 **Market Opportunity:** $5B+ current, $50B+ by 2030 (46% CAGR)
@@ -100,7 +100,7 @@ Enterprise customers seeking AI automation solutions for:
 
 ### Technical Specifications:
 - **Language:** Python 3.13
-- **Framework:** LangGraph + LangChain
+- **Framework:** 12thhaus + LangChain
 - **AI Models:** Claude 3.5 Sonnet (Anthropic)
 - **Architecture:** Microservices with agent orchestration
 - **Testing:** Pytest with comprehensive coverage
@@ -209,10 +209,10 @@ Enterprise customers seeking AI automation solutions for:
 **Instagram:** @jeffchery  
 **Location:** Atlanta, GA (Stockbridge)
 
-**Repository:** https://github.com/thehaitianmufasa/langgraph-multi-agent-platform  
+**Repository:** https://github.com/thehaitianmufasa/12thhaus-spiritual-platform  
 **Status:** Production-Ready Enterprise Platform  
 **Last Updated:** July 16, 2025
 
 ---
 
-*This comprehensive reference document serves as the definitive guide to the LangGraph Multi-Agent Platform project, providing complete context for future AI interactions and development discussions.*
+*This comprehensive reference document serves as the definitive guide to the 12thhaus Spiritual Platform project, providing complete context for future AI interactions and development discussions.*

@@ -105,7 +105,7 @@
 
 ---
 
-**Repository**: https://github.com/thehaitianmufasa/langgraph-multi-agent-platform  
+**Repository**: https://github.com/thehaitianmufasa/12thhaus-spiritual-platform  
 **Owner**: Jeff Chery (The Haitian Mufasa)  
 **Achievement Date**: July 16, 2025  
 **Platform Status**: **PRODUCTION-READY ENTERPRISE PLATFORM** 🚀

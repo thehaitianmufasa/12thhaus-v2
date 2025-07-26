@@ -1,0 +1,2061 @@
+version: 3
+sources:
+- name: spiritual_db
+  kind: postgres
+  configuration:
+    connection_info:
+      use_prepared_statements: true
+      database_url:
+        from_env: HASURA_GRAPHQL_DATABASE_URL
+      isolation_level: read-committed
+      pool_settings:
+        connection_lifetime: 600
+        retries: 1
+        idle_timeout: 180
+        max_connections: 50
+  tables:
+  # =====================================================
+  # CORE USER MANAGEMENT TABLES
+  # =====================================================
+  - table:
+      schema: public
+      name: users
+    object_relationships:
+    - name: practitioner_profile
+      using:
+        foreign_key_constraint_on:
+          column: user_id
+          table:
+            schema: public
+            name: practitioner_profiles
+    - name: spiritual_preferences
+      using:
+        foreign_key_constraint_on:
+          column: user_id
+          table:
+            schema: public
+            name: user_spiritual_preferences
+    array_relationships:
+    - name: client_bookings
+      using:
+        foreign_key_constraint_on:
+          column: client_id
+          table:
+            schema: public
+            name: spiritual_bookings
+    - name: reviews_given
+      using:
+        foreign_key_constraint_on:
+          column: client_id
+          table:
+            schema: public
+            name: spiritual_reviews
+    - name: community_posts
+      using:
+        foreign_key_constraint_on:
+          column: author_id
+          table:
+            schema: public
+            name: community_posts
+    - name: community_comments
+      using:
+        foreign_key_constraint_on:
+          column: author_id
+          table:
+            schema: public
+            name: community_comments
+    - name: conversations_as_participant
+      using:
+        foreign_key_constraint_on:
+          column: user_id
+          table:
+            schema: public
+            name: conversation_participants
+    - name: messages_sent
+      using:
+        foreign_key_constraint_on:
+          column: sender_id
+          table:
+            schema: public
+            name: messages
+    - name: notifications
+      using:
+        foreign_key_constraint_on:
+          column: recipient_id
+          table:
+            schema: public
+            name: notifications
+    - name: spiritual_journey_entries
+      using:
+        foreign_key_constraint_on:
+          column: user_id
+          table:
+            schema: public
+            name: spiritual_journey_entries
+    - name: event_registrations
+      using:
+        foreign_key_constraint_on:
+          column: user_id
+          table:
+            schema: public
+            name: spiritual_event_registrations
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - email
+        - full_name
+        - first_name
+        - last_name
+        - profile_image_url
+        - banner_image_url
+        - bio
+        - user_type
+        - is_active
+        - is_verified
+        - energy_sensitivity
+        - spiritual_experience
+        - privacy_level
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - id:
+              _eq: X-Hasura-User-Id
+          - privacy_level:
+              _eq: public
+          - _and:
+            - privacy_level:
+                _eq: community
+            - _exists:
+                _table:
+                  schema: public
+                  name: users
+                _where:
+                  id:
+                    _eq: X-Hasura-User-Id
+    - role: practitioner
+      permission:
+        columns:
+        - id
+        - email
+        - full_name
+        - first_name
+        - last_name
+        - profile_image_url
+        - banner_image_url
+        - bio
+        - user_type
+        - is_active
+        - is_verified
+        - energy_sensitivity
+        - spiritual_experience
+        - privacy_level
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - id:
+              _eq: X-Hasura-User-Id
+          - privacy_level:
+              _in: [public, community]
+    insert_permissions:
+    - role: anonymous
+      permission:
+        check: {}
+        columns:
+        - email
+        - password_hash
+        - full_name
+        - first_name
+        - last_name
+        - user_type
+        - phone
+    update_permissions:
+    - role: user
+      permission:
+        columns:
+        - full_name
+        - first_name
+        - last_name
+        - profile_image_url
+        - banner_image_url
+        - bio
+        - birth_date
+        - birth_time
+        - birth_location
+        - timezone
+        - language
+        - energy_sensitivity
+        - spiritual_goals
+        - spiritual_experience
+        - privacy_level
+        - communication_preferences
+        - notification_preferences
+        filter:
+          id:
+            _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # SPIRITUAL DISCIPLINES REFERENCE TABLE
+  # =====================================================
+  - table:
+      schema: public
+      name: spiritual_disciplines
+    array_relationships:
+    - name: services
+      using:
+        foreign_key_constraint_on:
+          column: discipline_id
+          table:
+            schema: public
+            name: spiritual_services
+    - name: community_posts
+      using:
+        foreign_key_constraint_on:
+          column: spiritual_discipline_id
+          table:
+            schema: public
+            name: community_posts
+    - name: spiritual_events
+      using:
+        foreign_key_constraint_on:
+          column: spiritual_discipline_id
+          table:
+            schema: public
+            name: spiritual_events
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - name
+        - category
+        - type
+        - description
+        - typical_duration_min
+        - typical_duration_max
+        - certification_required
+        - experience_level_required
+        - preparation_needed
+        - follow_up_recommended
+        - keywords
+        filter:
+          is_active:
+            _eq: true
+    - role: anonymous
+      permission:
+        columns:
+        - id
+        - name
+        - category
+        - type
+        - description
+        - typical_duration_min
+        - typical_duration_max
+        filter:
+          is_active:
+            _eq: true
+
+  # =====================================================
+  # PRACTITIONER MANAGEMENT
+  # =====================================================
+  - table:
+      schema: public
+      name: practitioner_profiles
+    object_relationships:
+    - name: user
+      using:
+        foreign_key_constraint_on: user_id
+    - name: primary_discipline
+      using:
+        foreign_key_constraint_on: primary_discipline_id
+    array_relationships:
+    - name: services
+      using:
+        foreign_key_constraint_on:
+          column: practitioner_id
+          table:
+            schema: public
+            name: spiritual_services
+    - name: bookings_received
+      using:
+        foreign_key_constraint_on:
+          column: practitioner_id
+          table:
+            schema: public
+            name: spiritual_bookings
+    - name: reviews_received
+      using:
+        foreign_key_constraint_on:
+          column: practitioner_id
+          table:
+            schema: public
+            name: spiritual_reviews
+    - name: availability_schedules
+      using:
+        foreign_key_constraint_on:
+          column: practitioner_id
+          table:
+            schema: public
+            name: practitioner_availability
+    - name: time_slots
+      using:
+        foreign_key_constraint_on:
+          column: practitioner_id
+          table:
+            schema: public
+            name: practitioner_time_slots
+    - name: payouts
+      using:
+        foreign_key_constraint_on:
+          column: practitioner_id
+          table:
+            schema: public
+            name: practitioner_payouts
+    - name: events_organized
+      using:
+        foreign_key_constraint_on:
+          column: organizer_id
+          table:
+            schema: public
+            name: spiritual_events
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - user_id
+        - business_name
+        - display_name
+        - professional_title
+        - years_of_experience
+        - years_studying
+        - primary_discipline_id
+        - secondary_disciplines
+        - spiritual_philosophy
+        - training_lineage
+        - initiation_level
+        - service_location
+        - offers_remote_healing
+        - consultation_style
+        - website_url
+        - social_media_links
+        - address_city
+        - address_state
+        - address_country
+        - specialties
+        - languages
+        - professional_memberships
+        - education_background
+        - bio
+        - mission_statement
+        - profile_image_url
+        - banner_image_url
+        - portfolio_images
+        - status
+        - rating_average
+        - total_reviews
+        - total_sessions
+        - response_time_hours
+        - booking_lead_time_days
+        - is_accepting_clients
+        - cancellation_policy
+        - refund_policy
+        - is_featured
+        - featured_until
+        - promotional_message
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - status:
+              _eq: active
+    - role: practitioner
+      permission:
+        columns:
+        - id
+        - user_id
+        - business_name
+        - display_name
+        - professional_title
+        - years_of_experience
+        - years_studying
+        - primary_discipline_id
+        - secondary_disciplines
+        - spiritual_philosophy
+        - training_lineage
+        - initiation_level
+        - service_location
+        - offers_remote_healing
+        - consultation_style
+        - session_preparation_required
+        - phone_number
+        - website_url
+        - social_media_links
+        - address_street
+        - address_city
+        - address_state
+        - address_country
+        - address_zip
+        - coordinates
+        - certifications
+        - specialties
+        - languages
+        - professional_memberships
+        - education_background
+        - bio
+        - mission_statement
+        - profile_image_url
+        - banner_image_url
+        - portfolio_images
+        - testimonial_videos
+        - status
+        - verification_documents
+        - verification_notes
+        - onboarding_step_completed
+        - onboarding_completed_at
+        - rating_average
+        - total_reviews
+        - total_sessions
+        - response_time_hours
+        - booking_lead_time_days
+        - is_accepting_clients
+        - max_clients_per_day
+        - buffer_time_minutes
+        - cancellation_policy
+        - refund_policy
+        - stripe_account_id
+        - payout_schedule
+        - platform_fee_percentage
+        - is_featured
+        - featured_until
+        - promotional_message
+        - last_active_at
+        - created_at
+        - updated_at
+        filter:
+          user_id:
+            _eq: X-Hasura-User-Id
+    insert_permissions:
+    - role: user
+      permission:
+        check:
+          user_id:
+            _eq: X-Hasura-User-Id
+        columns:
+        - user_id
+        - business_name
+        - display_name
+        - professional_title
+        - years_of_experience
+        - years_studying
+        - primary_discipline_id
+        - secondary_disciplines
+        - spiritual_philosophy
+        - training_lineage
+        - initiation_level
+        - service_location
+        - offers_remote_healing
+        - consultation_style
+        - session_preparation_required
+        - phone_number
+        - website_url
+        - social_media_links
+        - address_street
+        - address_city
+        - address_state
+        - address_country
+        - address_zip
+        - certifications
+        - specialties
+        - languages
+        - professional_memberships
+        - education_background
+        - bio
+        - mission_statement
+        - profile_image_url
+        - banner_image_url
+        - cancellation_policy
+        - refund_policy
+    update_permissions:
+    - role: practitioner
+      permission:
+        columns:
+        - business_name
+        - display_name
+        - professional_title
+        - years_of_experience
+        - years_studying
+        - primary_discipline_id
+        - secondary_disciplines
+        - spiritual_philosophy
+        - training_lineage
+        - initiation_level
+        - service_location
+        - offers_remote_healing
+        - consultation_style
+        - session_preparation_required
+        - phone_number
+        - website_url
+        - social_media_links
+        - address_street
+        - address_city
+        - address_state
+        - address_country
+        - address_zip
+        - certifications
+        - specialties
+        - languages
+        - professional_memberships
+        - education_background
+        - bio
+        - mission_statement
+        - profile_image_url
+        - banner_image_url
+        - portfolio_images
+        - is_accepting_clients
+        - max_clients_per_day
+        - buffer_time_minutes
+        - cancellation_policy
+        - refund_policy
+        filter:
+          user_id:
+            _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # SPIRITUAL SERVICES
+  # =====================================================
+  - table:
+      schema: public
+      name: spiritual_services
+    object_relationships:
+    - name: practitioner
+      using:
+        foreign_key_constraint_on: practitioner_id
+    - name: discipline
+      using:
+        foreign_key_constraint_on: discipline_id
+    array_relationships:
+    - name: bookings
+      using:
+        foreign_key_constraint_on:
+          column: service_id
+          table:
+            schema: public
+            name: spiritual_bookings
+    - name: reviews
+      using:
+        foreign_key_constraint_on:
+          column: service_id
+          table:
+            schema: public
+            name: spiritual_reviews
+    - name: service_availability
+      using:
+        foreign_key_constraint_on:
+          column: service_id
+          table:
+            schema: public
+            name: service_availability
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - practitioner_id
+        - name
+        - slug
+        - short_description
+        - full_description
+        - discipline_id
+        - category
+        - energy_type
+        - duration_minutes
+        - location_type
+        - max_participants
+        - min_age
+        - pricing_model
+        - base_price
+        - currency
+        - sliding_scale_min
+        - sliding_scale_max
+        - package_sessions
+        - package_discount_percentage
+        - first_time_discount_percentage
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - client_requirements
+        - contraindications
+        - session_includes
+        - post_session_support
+        - follow_up_included
+        - recorded_session
+        - session_notes_provided
+        - advance_booking_days
+        - cancellation_hours
+        - cancellation_policy
+        - reschedule_policy
+        - image_urls
+        - video_preview_url
+        - sample_reading
+        - is_active
+        - is_featured
+        - approval_status
+        - meta_title
+        - meta_description
+        - keywords
+        - view_count
+        - booking_count
+        - rating_average
+        - review_count
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - is_active:
+              _eq: true
+          - practitioner:
+              user_id:
+                _eq: X-Hasura-User-Id
+    - role: practitioner
+      permission:
+        columns:
+        - id
+        - practitioner_id
+        - name
+        - slug
+        - short_description
+        - full_description
+        - discipline_id
+        - category
+        - energy_type
+        - duration_minutes
+        - location_type
+        - max_participants
+        - min_age
+        - pricing_model
+        - base_price
+        - currency
+        - sliding_scale_min
+        - sliding_scale_max
+        - package_sessions
+        - package_discount_percentage
+        - first_time_discount_percentage
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - client_requirements
+        - contraindications
+        - session_includes
+        - post_session_support
+        - follow_up_included
+        - recorded_session
+        - session_notes_provided
+        - advance_booking_days
+        - cancellation_hours
+        - cancellation_policy
+        - reschedule_policy
+        - image_urls
+        - video_preview_url
+        - sample_reading
+        - is_active
+        - is_featured
+        - approval_status
+        - rejection_reason
+        - meta_title
+        - meta_description
+        - keywords
+        - view_count
+        - booking_count
+        - rating_average
+        - review_count
+        - created_at
+        - updated_at
+        filter:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+    - role: anonymous
+      permission:
+        columns:
+        - id
+        - practitioner_id
+        - name
+        - short_description
+        - full_description
+        - discipline_id
+        - category
+        - duration_minutes
+        - location_type
+        - max_participants
+        - pricing_model
+        - base_price
+        - currency
+        - image_urls
+        - rating_average
+        - review_count
+        filter:
+          _and:
+          - is_active:
+              _eq: true
+          - approval_status:
+              _eq: approved
+    insert_permissions:
+    - role: practitioner
+      permission:
+        check:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+        columns:
+        - practitioner_id
+        - name
+        - short_description
+        - full_description
+        - discipline_id
+        - category
+        - energy_type
+        - duration_minutes
+        - location_type
+        - max_participants
+        - min_age
+        - pricing_model
+        - base_price
+        - currency
+        - sliding_scale_min
+        - sliding_scale_max
+        - package_sessions
+        - package_discount_percentage
+        - first_time_discount_percentage
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - client_requirements
+        - contraindications
+        - session_includes
+        - post_session_support
+        - follow_up_included
+        - recorded_session
+        - session_notes_provided
+        - advance_booking_days
+        - cancellation_hours
+        - cancellation_policy
+        - reschedule_policy
+        - image_urls
+        - video_preview_url
+        - sample_reading
+        - meta_title
+        - meta_description
+        - keywords
+    update_permissions:
+    - role: practitioner
+      permission:
+        columns:
+        - name
+        - short_description
+        - full_description
+        - discipline_id
+        - category
+        - energy_type
+        - duration_minutes
+        - location_type
+        - max_participants
+        - min_age
+        - pricing_model
+        - base_price
+        - currency
+        - sliding_scale_min
+        - sliding_scale_max
+        - package_sessions
+        - package_discount_percentage
+        - first_time_discount_percentage
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - client_requirements
+        - contraindications
+        - session_includes
+        - post_session_support
+        - follow_up_included
+        - recorded_session
+        - session_notes_provided
+        - advance_booking_days
+        - cancellation_hours
+        - cancellation_policy
+        - reschedule_policy
+        - image_urls
+        - video_preview_url
+        - sample_reading
+        - is_active
+        - meta_title
+        - meta_description
+        - keywords
+        filter:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # BOOKING SYSTEM
+  # =====================================================
+  - table:
+      schema: public
+      name: spiritual_bookings
+    object_relationships:
+    - name: practitioner
+      using:
+        foreign_key_constraint_on: practitioner_id
+    - name: client
+      using:
+        foreign_key_constraint_on: client_id
+    - name: service
+      using:
+        foreign_key_constraint_on: service_id
+    - name: time_slot
+      using:
+        foreign_key_constraint_on: time_slot_id
+    - name: cancelled_by_user
+      using:
+        foreign_key_constraint_on: cancelled_by
+    - name: rescheduled_from_booking
+      using:
+        foreign_key_constraint_on: rescheduled_from
+    array_relationships:
+    - name: preparation_tasks
+      using:
+        foreign_key_constraint_on:
+          column: booking_id
+          table:
+            schema: public
+            name: session_preparations
+    - name: followup_sessions
+      using:
+        foreign_key_constraint_on:
+          column: booking_id
+          table:
+            schema: public
+            name: session_followups
+    - name: payment_transactions
+      using:
+        foreign_key_constraint_on:
+          column: booking_id
+          table:
+            schema: public
+            name: payment_transactions
+    - name: reviews
+      using:
+        foreign_key_constraint_on:
+          column: booking_id
+          table:
+            schema: public
+            name: spiritual_reviews
+    - name: journey_entries
+      using:
+        foreign_key_constraint_on:
+          column: booking_id
+          table:
+            schema: public
+            name: spiritual_journey_entries
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - practitioner_id
+        - client_id
+        - service_id
+        - time_slot_id
+        - scheduled_at
+        - scheduled_end_at
+        - timezone
+        - actual_start_at
+        - actual_end_at
+        - duration_minutes
+        - location_type
+        - meeting_location
+        - meeting_link
+        - meeting_password
+        - phone_number
+        - service_price
+        - pricing_model
+        - platform_fee
+        - total_amount
+        - currency
+        - discount_applied
+        - discount_reason
+        - status
+        - payment_status
+        - client_notes
+        - client_contact_preference
+        - session_summary
+        - insights_shared
+        - recommendations
+        - preparation_sent
+        - preparation_sent_at
+        - preparation_completed
+        - client_questions
+        - special_requests
+        - energy_intention
+        - session_recording_url
+        - session_notes_url
+        - additional_materials
+        - photos_shared
+        - cancelled_at
+        - cancelled_by
+        - cancellation_reason
+        - cancellation_fee
+        - rescheduled_from
+        - reschedule_count
+        - follow_up_scheduled
+        - follow_up_date
+        - follow_up_completed
+        - client_satisfaction_rating
+        - booking_source
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - client_id:
+              _eq: X-Hasura-User-Id
+          - practitioner:
+              user_id:
+                _eq: X-Hasura-User-Id
+    - role: practitioner
+      permission:
+        columns:
+        - id
+        - practitioner_id
+        - client_id
+        - service_id
+        - time_slot_id
+        - scheduled_at
+        - scheduled_end_at
+        - timezone
+        - actual_start_at
+        - actual_end_at
+        - duration_minutes
+        - location_type
+        - meeting_location
+        - meeting_link
+        - meeting_password
+        - phone_number
+        - service_price
+        - pricing_model
+        - platform_fee
+        - total_amount
+        - currency
+        - discount_applied
+        - discount_reason
+        - status
+        - payment_status
+        - client_notes
+        - client_contact_preference
+        - practitioner_notes
+        - session_summary
+        - insights_shared
+        - recommendations
+        - preparation_sent
+        - preparation_sent_at
+        - preparation_completed
+        - client_questions
+        - special_requests
+        - energy_intention
+        - session_recording_url
+        - session_notes_url
+        - additional_materials
+        - photos_shared
+        - cancelled_at
+        - cancelled_by
+        - cancellation_reason
+        - cancellation_fee
+        - rescheduled_from
+        - reschedule_count
+        - follow_up_scheduled
+        - follow_up_date
+        - follow_up_completed
+        - client_satisfaction_rating
+        - practitioner_energy_rating
+        - session_effectiveness_rating
+        - booking_source
+        - admin_notes
+        - internal_flags
+        - created_at
+        - updated_at
+        filter:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+    insert_permissions:
+    - role: user
+      permission:
+        check:
+          client_id:
+            _eq: X-Hasura-User-Id
+        columns:
+        - practitioner_id
+        - client_id
+        - service_id
+        - time_slot_id
+        - scheduled_at
+        - scheduled_end_at
+        - timezone
+        - duration_minutes
+        - location_type
+        - meeting_location
+        - phone_number
+        - service_price
+        - pricing_model
+        - total_amount
+        - currency
+        - discount_applied
+        - discount_reason
+        - client_notes
+        - client_contact_preference
+        - client_questions
+        - special_requests
+        - energy_intention
+        - booking_source
+    update_permissions:
+    - role: user
+      permission:
+        columns:
+        - scheduled_at
+        - scheduled_end_at
+        - timezone
+        - location_type
+        - meeting_location
+        - phone_number
+        - client_notes
+        - client_contact_preference
+        - preparation_completed
+        - client_questions
+        - special_requests
+        - energy_intention
+        - client_satisfaction_rating
+        filter:
+          client_id:
+            _eq: X-Hasura-User-Id
+    - role: practitioner
+      permission:
+        columns:
+        - actual_start_at
+        - actual_end_at
+        - meeting_link
+        - meeting_password
+        - status
+        - practitioner_notes
+        - session_summary
+        - insights_shared
+        - recommendations
+        - preparation_sent
+        - preparation_sent_at
+        - session_recording_url
+        - session_notes_url
+        - additional_materials
+        - photos_shared
+        - cancelled_at
+        - cancellation_reason
+        - cancellation_fee
+        - follow_up_scheduled
+        - follow_up_date
+        - follow_up_completed
+        - practitioner_energy_rating
+        - session_effectiveness_rating
+        filter:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # REVIEW SYSTEM
+  # =====================================================
+  - table:
+      schema: public
+      name: spiritual_reviews
+    object_relationships:
+    - name: booking
+      using:
+        foreign_key_constraint_on: booking_id
+    - name: practitioner
+      using:
+        foreign_key_constraint_on: practitioner_id
+    - name: client
+      using:
+        foreign_key_constraint_on: client_id
+    - name: service
+      using:
+        foreign_key_constraint_on: service_id
+    array_relationships:
+    - name: helpfulness_votes
+      using:
+        foreign_key_constraint_on:
+          column: review_id
+          table:
+            schema: public
+            name: review_helpfulness
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - booking_id
+        - practitioner_id
+        - client_id
+        - service_id
+        - overall_rating
+        - accuracy_rating
+        - clarity_rating
+        - connection_rating
+        - value_rating
+        - professionalism_rating
+        - review_title
+        - review_text
+        - spiritual_insights_helpful
+        - felt_energetic_connection
+        - guidance_was_clear
+        - would_recommend
+        - would_book_again
+        - is_verified
+        - is_featured
+        - is_anonymous
+        - display_name
+        - practitioner_response
+        - practitioner_response_at
+        - helpful_votes
+        - not_helpful_votes
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - client_id:
+              _eq: X-Hasura-User-Id
+          - practitioner:
+              user_id:
+                _eq: X-Hasura-User-Id
+          - is_approved:
+              _eq: true
+    - role: practitioner
+      permission:
+        columns:
+        - id
+        - booking_id
+        - practitioner_id
+        - client_id
+        - service_id
+        - overall_rating
+        - accuracy_rating
+        - clarity_rating
+        - connection_rating
+        - value_rating
+        - professionalism_rating
+        - review_title
+        - review_text
+        - private_feedback
+        - spiritual_insights_helpful
+        - felt_energetic_connection
+        - guidance_was_clear
+        - would_recommend
+        - would_book_again
+        - is_verified
+        - is_featured
+        - is_anonymous
+        - display_name
+        - practitioner_response
+        - practitioner_response_at
+        - helpful_votes
+        - not_helpful_votes
+        - created_at
+        - updated_at
+        filter:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+    - role: anonymous
+      permission:
+        columns:
+        - id
+        - practitioner_id
+        - service_id
+        - overall_rating
+        - accuracy_rating
+        - clarity_rating
+        - connection_rating
+        - value_rating
+        - review_title
+        - review_text
+        - spiritual_insights_helpful
+        - felt_energetic_connection
+        - guidance_was_clear
+        - would_recommend
+        - is_verified
+        - is_featured
+        - is_anonymous
+        - display_name
+        - practitioner_response
+        - practitioner_response_at
+        - helpful_votes
+        - not_helpful_votes
+        - created_at
+        filter:
+          _and:
+          - is_approved:
+              _eq: true
+          - is_flagged:
+              _eq: false
+    insert_permissions:
+    - role: user
+      permission:
+        check:
+          booking:
+            client_id:
+              _eq: X-Hasura-User-Id
+        columns:
+        - booking_id
+        - practitioner_id
+        - client_id
+        - service_id
+        - overall_rating
+        - accuracy_rating
+        - clarity_rating
+        - connection_rating
+        - value_rating
+        - professionalism_rating
+        - review_title
+        - review_text
+        - private_feedback
+        - spiritual_insights_helpful
+        - felt_energetic_connection
+        - guidance_was_clear
+        - would_recommend
+        - would_book_again
+        - is_anonymous
+        - display_name
+    update_permissions:
+    - role: user
+      permission:
+        columns:
+        - overall_rating
+        - accuracy_rating
+        - clarity_rating
+        - connection_rating
+        - value_rating
+        - professionalism_rating
+        - review_title
+        - review_text
+        - private_feedback
+        - spiritual_insights_helpful
+        - felt_energetic_connection
+        - guidance_was_clear
+        - would_recommend
+        - would_book_again
+        - is_anonymous
+        - display_name
+        filter:
+          client_id:
+            _eq: X-Hasura-User-Id
+    - role: practitioner
+      permission:
+        columns:
+        - practitioner_response
+        - practitioner_response_at
+        filter:
+          practitioner:
+            user_id:
+              _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # COMMUNITY FEATURES
+  # =====================================================
+  - table:
+      schema: public
+      name: community_posts
+    object_relationships:
+    - name: author
+      using:
+        foreign_key_constraint_on: author_id
+    - name: spiritual_discipline
+      using:
+        foreign_key_constraint_on: spiritual_discipline_id
+    array_relationships:
+    - name: comments
+      using:
+        foreign_key_constraint_on:
+          column: post_id
+          table:
+            schema: public
+            name: community_comments
+    - name: engagements
+      using:
+        foreign_key_constraint_on:
+          column: post_id
+          table:
+            schema: public
+            name: community_engagements
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - author_id
+        - title
+        - content
+        - excerpt
+        - post_type
+        - spiritual_discipline_id
+        - topics
+        - tags
+        - image_urls
+        - video_urls
+        - audio_urls
+        - is_public
+        - is_anonymous
+        - visibility_level
+        - is_pinned
+        - is_featured
+        - is_closed
+        - view_count
+        - like_count
+        - comment_count
+        - share_count
+        - save_count
+        - slug
+        - published_at
+        - created_at
+        - updated_at
+        filter:
+          _and:
+          - is_approved:
+              _eq: true
+          - _or:
+            - visibility_level:
+                _eq: all
+            - _and:
+              - visibility_level:
+                  _eq: community
+              - _exists:
+                  _table:
+                    schema: public
+                    name: users
+                  _where:
+                    id:
+                      _eq: X-Hasura-User-Id
+            - author_id:
+                _eq: X-Hasura-User-Id
+    - role: anonymous
+      permission:
+        columns:
+        - id
+        - title
+        - content
+        - excerpt
+        - post_type
+        - spiritual_discipline_id
+        - topics
+        - tags
+        - image_urls
+        - video_urls
+        - audio_urls
+        - is_anonymous
+        - is_pinned
+        - is_featured
+        - view_count
+        - like_count
+        - comment_count
+        - share_count
+        - save_count
+        - slug
+        - published_at
+        - created_at
+        filter:
+          _and:
+          - is_approved:
+              _eq: true
+          - visibility_level:
+              _eq: all
+          - is_public:
+              _eq: true
+    insert_permissions:
+    - role: user
+      permission:
+        check:
+          author_id:
+            _eq: X-Hasura-User-Id
+        columns:
+        - author_id
+        - title
+        - content
+        - post_type
+        - spiritual_discipline_id
+        - topics
+        - tags
+        - image_urls
+        - video_urls
+        - audio_urls
+        - is_public
+        - is_anonymous
+        - visibility_level
+    update_permissions:
+    - role: user
+      permission:
+        columns:
+        - title
+        - content
+        - post_type
+        - spiritual_discipline_id
+        - topics
+        - tags
+        - image_urls
+        - video_urls
+        - audio_urls
+        - is_public
+        - is_anonymous
+        - visibility_level
+        filter:
+          author_id:
+            _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # SPIRITUAL JOURNEY TRACKING
+  # =====================================================
+  - table:
+      schema: public
+      name: spiritual_journey_entries
+    object_relationships:
+    - name: user
+      using:
+        foreign_key_constraint_on: user_id
+    - name: booking
+      using:
+        foreign_key_constraint_on: booking_id
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - user_id
+        - booking_id
+        - entry_date
+        - entry_type
+        - title
+        - content
+        - energy_level
+        - emotional_state
+        - spiritual_clarity
+        - life_satisfaction
+        - pre_session_intention
+        - post_session_insights
+        - guidance_received
+        - synchronicities
+        - goals_set
+        - goals_achieved
+        - challenges_faced
+        - breakthroughs
+        - is_private
+        - created_at
+        - updated_at
+        filter:
+          user_id:
+            _eq: X-Hasura-User-Id
+    insert_permissions:
+    - role: user
+      permission:
+        check:
+          user_id:
+            _eq: X-Hasura-User-Id
+        columns:
+        - user_id
+        - booking_id
+        - entry_date
+        - entry_type
+        - title
+        - content
+        - energy_level
+        - emotional_state
+        - spiritual_clarity
+        - life_satisfaction
+        - pre_session_intention
+        - post_session_insights
+        - guidance_received
+        - synchronicities
+        - goals_set
+        - goals_achieved
+        - challenges_faced
+        - breakthroughs
+        - is_private
+    update_permissions:
+    - role: user
+      permission:
+        columns:
+        - entry_date
+        - entry_type
+        - title
+        - content
+        - energy_level
+        - emotional_state
+        - spiritual_clarity
+        - life_satisfaction
+        - pre_session_intention
+        - post_session_insights
+        - guidance_received
+        - synchronicities
+        - goals_set
+        - goals_achieved
+        - challenges_faced
+        - breakthroughs
+        - is_private
+        filter:
+          user_id:
+            _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # SPIRITUAL EVENTS
+  # =====================================================
+  - table:
+      schema: public
+      name: spiritual_events
+    object_relationships:
+    - name: organizer
+      using:
+        foreign_key_constraint_on: organizer_id
+    - name: spiritual_discipline
+      using:
+        foreign_key_constraint_on: spiritual_discipline_id
+    array_relationships:
+    - name: registrations
+      using:
+        foreign_key_constraint_on:
+          column: event_id
+          table:
+            schema: public
+            name: spiritual_event_registrations
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - organizer_id
+        - title
+        - description
+        - event_type
+        - spiritual_discipline_id
+        - start_datetime
+        - end_datetime
+        - timezone
+        - duration_minutes
+        - is_virtual
+        - meeting_link
+        - physical_address
+        - location_notes
+        - max_participants
+        - min_participants
+        - current_participants
+        - waitlist_enabled
+        - price
+        - currency
+        - pricing_model
+        - sliding_scale_available
+        - experience_level_required
+        - age_restriction
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - is_active
+        - is_featured
+        - registration_deadline
+        - cancellation_policy
+        - image_url
+        - promotional_video_url
+        - created_at
+        - updated_at
+        filter:
+          is_active:
+            _eq: true
+    - role: practitioner
+      permission:
+        columns:
+        - id
+        - organizer_id
+        - title
+        - description
+        - event_type
+        - spiritual_discipline_id
+        - start_datetime
+        - end_datetime
+        - timezone
+        - duration_minutes
+        - is_virtual
+        - meeting_link
+        - physical_address
+        - location_notes
+        - max_participants
+        - min_participants
+        - current_participants
+        - waitlist_enabled
+        - price
+        - currency
+        - pricing_model
+        - sliding_scale_available
+        - experience_level_required
+        - age_restriction
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - is_active
+        - is_featured
+        - registration_deadline
+        - cancellation_policy
+        - image_url
+        - promotional_video_url
+        - created_at
+        - updated_at
+        filter:
+          _or:
+          - is_active:
+              _eq: true
+          - organizer:
+              user_id:
+                _eq: X-Hasura-User-Id
+    insert_permissions:
+    - role: practitioner
+      permission:
+        check:
+          organizer:
+            user_id:
+              _eq: X-Hasura-User-Id
+        columns:
+        - organizer_id
+        - title
+        - description
+        - event_type
+        - spiritual_discipline_id
+        - start_datetime
+        - end_datetime
+        - timezone
+        - duration_minutes
+        - is_virtual
+        - meeting_link
+        - physical_address
+        - location_notes
+        - max_participants
+        - min_participants
+        - price
+        - currency
+        - pricing_model
+        - sliding_scale_available
+        - experience_level_required
+        - age_restriction
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - registration_deadline
+        - cancellation_policy
+        - image_url
+        - promotional_video_url
+    update_permissions:
+    - role: practitioner
+      permission:
+        columns:
+        - title
+        - description
+        - event_type
+        - spiritual_discipline_id
+        - start_datetime
+        - end_datetime
+        - timezone
+        - duration_minutes
+        - is_virtual
+        - meeting_link
+        - physical_address
+        - location_notes
+        - max_participants
+        - min_participants
+        - price
+        - currency
+        - pricing_model
+        - sliding_scale_available
+        - experience_level_required
+        - age_restriction
+        - preparation_required
+        - preparation_instructions
+        - what_to_bring
+        - is_active
+        - registration_deadline
+        - cancellation_policy
+        - image_url
+        - promotional_video_url
+        filter:
+          organizer:
+            user_id:
+              _eq: X-Hasura-User-Id
+
+  # =====================================================
+  # MESSAGING SYSTEM
+  # =====================================================
+  - table:
+      schema: public
+      name: conversations
+    object_relationships:
+    - name: booking
+      using:
+        foreign_key_constraint_on: booking_id
+    - name: creator
+      using:
+        foreign_key_constraint_on: created_by
+    array_relationships:
+    - name: participants
+      using:
+        foreign_key_constraint_on:
+          column: conversation_id
+          table:
+            schema: public
+            name: conversation_participants
+    - name: messages
+      using:
+        foreign_key_constraint_on:
+          column: conversation_id
+          table:
+            schema: public
+            name: messages
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - conversation_type
+        - booking_id
+        - title
+        - description
+        - is_active
+        - is_archived
+        - last_message_at
+        - last_message_preview
+        - message_count
+        - created_by
+        - created_at
+        - updated_at
+        filter:
+          participants:
+            user_id:
+              _eq: X-Hasura-User-Id
+
+  - table:
+      schema: public
+      name: messages
+    object_relationships:
+    - name: conversation
+      using:
+        foreign_key_constraint_on: conversation_id
+    - name: sender
+      using:
+        foreign_key_constraint_on: sender_id
+    - name: reply_to
+      using:
+        foreign_key_constraint_on: reply_to_id
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - conversation_id
+        - sender_id
+        - content
+        - message_type
+        - attachments
+        - is_edited
+        - edited_at
+        - is_deleted
+        - deleted_at
+        - reply_to_id
+        - read_by
+        - created_at
+        filter:
+          conversation:
+            participants:
+              user_id:
+                _eq: X-Hasura-User-Id
+    insert_permissions:
+    - role: user
+      permission:
+        check:
+          _and:
+          - sender_id:
+              _eq: X-Hasura-User-Id
+          - conversation:
+              participants:
+                user_id:
+                  _eq: X-Hasura-User-Id
+        columns:
+        - conversation_id
+        - sender_id
+        - content
+        - message_type
+        - attachments
+        - reply_to_id
+
+  # =====================================================
+  # NOTIFICATIONS
+  # =====================================================
+  - table:
+      schema: public
+      name: notifications
+    object_relationships:
+    - name: recipient
+      using:
+        foreign_key_constraint_on: recipient_id
+    - name: sender
+      using:
+        foreign_key_constraint_on: sender_id
+    - name: booking
+      using:
+        foreign_key_constraint_on: booking_id
+    - name: post
+      using:
+        foreign_key_constraint_on: post_id
+    - name: conversation
+      using:
+        foreign_key_constraint_on: conversation_id
+    - name: event
+      using:
+        foreign_key_constraint_on: event_id
+    select_permissions:
+    - role: user
+      permission:
+        columns:
+        - id
+        - recipient_id
+        - sender_id
+        - type
+        - title
+        - message
+        - booking_id
+        - post_id
+        - conversation_id
+        - event_id
+        - email_sent
+        - push_sent
+        - sms_sent
+        - in_app
+        - is_read
+        - read_at
+        - action_taken
+        - action_url
+        - scheduled_for
+        - sent_at
+        - metadata
+        - created_at
+        filter:
+          recipient_id:
+            _eq: X-Hasura-User-Id
+    update_permissions:
+    - role: user
+      permission:
+        columns:
+        - is_read
+        - read_at
+        - action_taken
+        filter:
+          recipient_id:
+            _eq: X-Hasura-User-Id
+
+# =====================================================
+# REMOTE SCHEMAS AND ACTIONS
+# =====================================================
+remote_schemas: []
+
+actions:
+- name: create_booking_with_payment
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/create-booking-with-payment"
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-action-secret
+      value_from_env: HASURA_ACTION_SECRET
+  comment: Create booking with Stripe payment processing
+  
+- name: process_practitioner_payout
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/process-practitioner-payout"
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-action-secret
+      value_from_env: HASURA_ACTION_SECRET
+  comment: Process weekly/monthly practitioner payouts
+
+- name: send_session_reminder
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/send-session-reminder"
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-action-secret
+      value_from_env: HASURA_ACTION_SECRET
+  comment: Send automated session reminders
+
+- name: match_practitioner_to_user
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/match-practitioner-to-user"
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-action-secret
+      value_from_env: HASURA_ACTION_SECRET
+  comment: AI-powered practitioner matching based on user preferences
+
+# =====================================================
+# CUSTOM TYPES
+# =====================================================
+custom_types:
+  enums:
+  - name: spiritual_discipline_category
+    values:
+    - value: astrology
+    - value: divination
+    - value: energy_healing
+    - value: wellness
+    - value: spiritual_therapy
+    - value: ceremony
+    - value: coaching
+  - name: service_location_type
+    values:
+    - value: in_person
+    - value: virtual
+    - value: both
+    - value: phone_only
+  - name: booking_status
+    values:
+    - value: inquiry
+    - value: pending_payment
+    - value: confirmed
+    - value: preparation_sent
+    - value: in_progress
+    - value: completed
+    - value: cancelled
+    - value: no_show
+    - value: refunded
+    - value: rescheduled
+  - name: payment_status
+    values:
+    - value: pending
+    - value: processing
+    - value: completed
+    - value: failed
+    - value: refunded
+    - value: partial_refund
+    - value: disputed
+  - name: experience_level
+    values:
+    - value: beginner
+    - value: some_experience
+    - value: intermediate
+    - value: advanced
+    - value: expert
+  - name: practitioner_status
+    values:
+    - value: pending_verification
+    - value: active
+    - value: inactive
+    - value: suspended
+    - value: rejected
+    - value: under_review
+  - name: energy_sensitivity
+    values:
+    - value: standard
+    - value: sensitive
+    - value: empath
+    - value: medium
+    - value: clairvoyant
+    - value: healer
+  - name: consultation_style
+    values:
+    - value: intuitive
+    - value: structured
+    - value: hybrid
+    - value: therapeutic
+    - value: mystical
+  - name: pricing_model
+    values:
+    - value: fixed
+    - value: sliding_scale
+    - value: donation_based
+    - value: package
+    - value: membership
+    - value: exchange
+  - name: community_action
+    values:
+    - value: like
+    - value: love
+    - value: insightful
+    - value: gratitude
+    - value: share
+    - value: save
+
+  input_objects:
+  - name: BookingPaymentInput
+    fields:
+    - name: service_id
+      type: uuid!
+    - name: practitioner_id
+      type: uuid!
+    - name: scheduled_at
+      type: timestamptz!
+    - name: duration_minutes
+      type: Int!
+    - name: location_type
+      type: service_location_type!
+    - name: client_notes
+      type: String
+    - name: payment_method_id
+      type: String!
+    - name: total_amount
+      type: numeric!
+
+  objects:
+  - name: BookingPaymentOutput
+    fields:
+    - name: booking_id
+      type: uuid!
+    - name: payment_intent_id
+      type: String!
+    - name: client_secret
+      type: String!
+    - name: status
+      type: String!
+
+  - name: MatchedPractitioner
+    fields:
+    - name: practitioner_id
+      type: uuid!
+    - name: compatibility_score
+      type: numeric!
+    - name: match_reasons
+      type: "[String!]!"
+    - name: practitioner_profile
+      type: practitioner_profiles!
+
+# =====================================================
+# COMPUTED FIELDS
+# =====================================================
+# Note: These would be defined in the database as SQL functions
+# and then exposed through Hasura's computed fields feature
+
+# =====================================================
+# EVENT TRIGGERS
+# =====================================================
+# Note: Event triggers would be configured to call webhook endpoints
+# for business logic like sending emails, processing payments, etc.
+
+# =====================================================
+# SCHEDULED TRIGGERS
+# =====================================================
+# Note: Scheduled triggers for recurring tasks like:
+# - Daily booking reminders
+# - Weekly practitioner payouts  
+# - Monthly analytics reports
+# - Quarterly review prompts

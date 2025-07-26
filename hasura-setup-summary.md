@@ -1,5 +1,5 @@
 # Hasura GraphQL Layer Setup Summary
-## LangGraph Multi-Agent Platform - Phase 1B Complete
+## 12thhaus Spiritual Platform - Phase 1B Complete
 
 **Date**: July 13, 2025  
 **Status**: ✅ **COMPLETED**  

@@ -1,5 +1,5 @@
 """
-Configuration for LangGraph Multi-Agent System with LangSmith integration
+Configuration for 12thhaus Spiritual Platform with AI Enhancement
 """
 import os
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ class Config:
     LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2", "true") == "true"
     LANGCHAIN_ENDPOINT = os.getenv("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
     LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
-    LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT", "langgraph-multi-agent")
+    LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT", "12thhaus-spiritual-platform")
     
     # Anthropic Configuration (for Claude)
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")

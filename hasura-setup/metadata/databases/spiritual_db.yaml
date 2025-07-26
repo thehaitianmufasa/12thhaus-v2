@@ -1,0 +1,436 @@
+- name: spiritual_db
+  kind: postgres
+  configuration:
+    connection_info:
+      use_prepared_statements: true
+      database_url:
+        from_env: HASURA_GRAPHQL_DATABASE_URL
+      isolation_level: read-committed
+      pool_settings:
+        connection_lifetime: 600
+        retries: 1
+        idle_timeout: 180
+        max_connections: 50
+  tables:
+    # Spiritual Community User Management
+    - table:
+        schema: public
+        name: practitioners
+      object_relationships:
+        - name: user
+          using:
+            foreign_key_constraint_on: user_id
+        - name: spiritual_services
+          using:
+            foreign_key_constraint_on: practitioner_id
+      array_relationships:
+        - name: bookings_received
+          using:
+            foreign_key_constraint_on:
+              column: practitioner_id
+              table:
+                schema: public
+                name: spiritual_bookings
+        - name: reviews_received
+          using:
+            foreign_key_constraint_on:
+              column: practitioner_id
+              table:
+                schema: public
+                name: spiritual_reviews
+      select_permissions:
+        - role: user
+          permission:
+            columns:
+              - id
+              - user_id
+              - display_name
+              - bio
+              - specialties
+              - experience_years
+              - certifications
+              - availability_schedule
+              - hourly_rate
+              - profile_image_url
+              - is_verified
+              - rating_average
+              - total_reviews
+              - created_at
+              - updated_at
+            filter:
+              _or:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - is_verified:
+                    _eq: true
+        - role: practitioner
+          permission:
+            columns:
+              - id
+              - user_id
+              - display_name
+              - bio
+              - specialties
+              - experience_years
+              - certifications
+              - availability_schedule
+              - hourly_rate
+              - profile_image_url
+              - is_verified
+              - rating_average
+              - total_reviews
+              - created_at
+              - updated_at
+            filter:
+              user_id:
+                _eq: X-Hasura-User-Id
+      insert_permissions:
+        - role: user
+          permission:
+            check:
+              user_id:
+                _eq: X-Hasura-User-Id
+            columns:
+              - user_id
+              - display_name
+              - bio
+              - specialties
+              - experience_years
+              - certifications
+              - availability_schedule
+              - hourly_rate
+              - profile_image_url
+      update_permissions:
+        - role: practitioner
+          permission:
+            columns:
+              - display_name
+              - bio
+              - specialties
+              - experience_years
+              - certifications
+              - availability_schedule
+              - hourly_rate
+              - profile_image_url
+            filter:
+              user_id:
+                _eq: X-Hasura-User-Id
+
+    - table:
+        schema: public
+        name: seekers
+      object_relationships:
+        - name: user
+          using:
+            foreign_key_constraint_on: user_id
+      array_relationships:
+        - name: bookings_made
+          using:
+            foreign_key_constraint_on:
+              column: seeker_id
+              table:
+                schema: public
+                name: spiritual_bookings
+        - name: reviews_given
+          using:
+            foreign_key_constraint_on:
+              column: seeker_id
+              table:
+                schema: public
+                name: spiritual_reviews
+      select_permissions:
+        - role: user
+          permission:
+            columns:
+              - id
+              - user_id
+              - display_name
+              - spiritual_interests
+              - experience_level
+              - goals
+              - preferences
+              - profile_image_url
+              - created_at
+              - updated_at
+            filter:
+              user_id:
+                _eq: X-Hasura-User-Id
+        - role: practitioner
+          permission:
+            columns:
+              - id
+              - display_name
+              - spiritual_interests
+              - experience_level
+              - profile_image_url
+            filter: {}
+      insert_permissions:
+        - role: user
+          permission:
+            check:
+              user_id:
+                _eq: X-Hasura-User-Id
+            columns:
+              - user_id
+              - display_name
+              - spiritual_interests
+              - experience_level
+              - goals
+              - preferences
+              - profile_image_url
+      update_permissions:
+        - role: user
+          permission:
+            columns:
+              - display_name
+              - spiritual_interests
+              - experience_level
+              - goals
+              - preferences
+              - profile_image_url
+            filter:
+              user_id:
+                _eq: X-Hasura-User-Id
+
+    - table:
+        schema: public
+        name: spiritual_services
+      object_relationships:
+        - name: practitioner
+          using:
+            foreign_key_constraint_on: practitioner_id
+      array_relationships:
+        - name: bookings
+          using:
+            foreign_key_constraint_on:
+              column: service_id
+              table:
+                schema: public
+                name: spiritual_bookings
+      select_permissions:
+        - role: user
+          permission:
+            columns:
+              - id
+              - practitioner_id
+              - name
+              - description
+              - category
+              - duration_minutes
+              - price
+              - currency
+              - is_active
+              - created_at
+              - updated_at
+            filter:
+              is_active:
+                _eq: true
+        - role: practitioner
+          permission:
+            columns:
+              - id
+              - practitioner_id
+              - name
+              - description
+              - category
+              - duration_minutes
+              - price
+              - currency
+              - is_active
+              - created_at
+              - updated_at
+            filter:
+              practitioner:
+                user_id:
+                  _eq: X-Hasura-User-Id
+      insert_permissions:
+        - role: practitioner
+          permission:
+            check:
+              practitioner:
+                user_id:
+                  _eq: X-Hasura-User-Id
+            columns:
+              - practitioner_id
+              - name
+              - description
+              - category
+              - duration_minutes
+              - price
+              - currency
+              - is_active
+      update_permissions:
+        - role: practitioner
+          permission:
+            columns:
+              - name
+              - description
+              - category
+              - duration_minutes
+              - price
+              - currency
+              - is_active
+            filter:
+              practitioner:
+                user_id:
+                  _eq: X-Hasura-User-Id
+
+    - table:
+        schema: public
+        name: spiritual_bookings
+      object_relationships:
+        - name: practitioner
+          using:
+            foreign_key_constraint_on: practitioner_id
+        - name: seeker
+          using:
+            foreign_key_constraint_on: seeker_id
+        - name: service
+          using:
+            foreign_key_constraint_on: service_id
+      select_permissions:
+        - role: user
+          permission:
+            columns:
+              - id
+              - practitioner_id
+              - seeker_id
+              - service_id
+              - scheduled_at
+              - duration_minutes
+              - total_price
+              - currency
+              - status
+              - payment_status
+              - meeting_link
+              - notes
+              - created_at
+              - updated_at
+            filter:
+              _or:
+                - seeker:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+                - practitioner:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+      insert_permissions:
+        - role: user
+          permission:
+            check:
+              seeker:
+                user_id:
+                  _eq: X-Hasura-User-Id
+            columns:
+              - practitioner_id
+              - seeker_id
+              - service_id
+              - scheduled_at
+              - duration_minutes
+              - total_price
+              - currency
+              - notes
+      update_permissions:
+        - role: user
+          permission:
+            columns:
+              - scheduled_at
+              - notes
+              - status
+            filter:
+              _or:
+                - seeker:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+                - practitioner:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+
+    - table:
+        schema: public
+        name: spiritual_reviews
+      object_relationships:
+        - name: practitioner
+          using:
+            foreign_key_constraint_on: practitioner_id
+        - name: seeker
+          using:
+            foreign_key_constraint_on: seeker_id
+        - name: booking
+          using:
+            foreign_key_constraint_on: booking_id
+      select_permissions:
+        - role: user
+          permission:
+            columns:
+              - id
+              - practitioner_id
+              - seeker_id
+              - booking_id
+              - rating
+              - review_text
+              - is_anonymous
+              - created_at
+              - updated_at
+            filter:
+              _or:
+                - seeker:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+                - practitioner:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+                - is_anonymous:
+                    _eq: false
+      insert_permissions:
+        - role: user
+          permission:
+            check:
+              seeker:
+                user_id:
+                  _eq: X-Hasura-User-Id
+            columns:
+              - practitioner_id
+              - seeker_id
+              - booking_id
+              - rating
+              - review_text
+              - is_anonymous
+
+  functions: []
+  remote_schemas: []
+  actions: []
+  custom_types:
+    enums:
+      - name: spiritual_service_category
+        values:
+          - value: tarot
+          - value: astrology
+          - value: reiki
+          - value: life_coaching
+          - value: meditation
+          - value: energy_healing
+          - value: crystal_healing
+          - value: numerology
+          - value: chakra_balancing
+          - value: spiritual_counseling
+      - name: booking_status
+        values:
+          - value: pending
+          - value: confirmed
+          - value: completed
+          - value: cancelled
+          - value: refunded
+      - name: payment_status
+        values:
+          - value: pending
+          - value: processing
+          - value: completed
+          - value: failed
+          - value: refunded
+      - name: experience_level
+        values:
+          - value: beginner
+          - value: intermediate
+          - value: advanced
+          - value: expert

@@ -1,24 +1,26 @@
-# 🚀 LangGraph Multi-Agent Platform
+# 🚀 12thhaus v2.0 - Spiritual Community Platform
 
-A production-ready, multi-tenant AI agent platform that automatically builds and deploys applications. Think of it as your personal AI development team that can take natural language requests and turn them into live applications.
+A production-ready spiritual community marketplace connecting practitioners with seekers through AI-enhanced experiences. Built on the advanced 12thhaus Spiritual Platform for enterprise-grade scalability and intelligent automation.
 
-## 🎯 What This Platform Does
+## 🎯 What 12thhaus Offers
 
-**In Simple Terms**: You describe what you want, and our AI agents build it for you automatically.
+**For Seekers**: Discover authentic spiritual practitioners, book sessions, and join a supportive community on your spiritual journey.
 
-**Example Flow**:
-1. You say: *"Build me a customer survey app for my restaurant"*
-2. Master Agent analyzes your request
-3. Code Generation Agent writes the application
-4. Deployment Agent publishes it live to the web
-5. Business Intelligence Agent sets up analytics
-6. Customer Operations Agent handles user support
+**For Practitioners**: Share your gifts, manage your practice, and connect with seekers who resonate with your offerings.
+
+**Example User Journey**:
+1. Seeker searches: *"Find a tarot reader for relationship guidance"*
+2. AI-powered matching suggests qualified practitioners
+3. Real-time booking with calendar integration
+4. Session completion with review system
+5. Community connection through posts and interactions
+6. Ongoing spiritual journey tracking and recommendations
 
 ## 🏗️ Platform Architecture
 
 ```
                         ┌─────────────────────┐
-                        │    Web Dashboard    │
+                        │  12thhaus Web App   │
                         │  (Next.js Frontend) │
                         └──────────┬──────────┘
                                    │
@@ -28,35 +30,35 @@ A production-ready, multi-tenant AI agent platform that automatically builds and
                         └──────────┬──────────┘
                                    │
                         ┌──────────┴──────────┐
-                        │  Multi-Tenant DB    │
+                        │   Spiritual DB      │
                         │   (PostgreSQL)      │
                         └──────────┬──────────┘
                                    │
                      ┌─────────────┴─────────────┐
                      │                           │
             ┌────────▼────────┐         ┌───────▼────────┐
-            │  Master Agent   │         │  N8N Workflow  │
-            │ (Task Router)   │◄────────┤    Engine      │
+            │ Spiritual Agent │         │  N8N Workflow  │
+            │ (Matchmaking)   │◄────────┤    Engine      │
             └────────┬────────┘         └────────────────┘
                      │
            ┌─────────┴───────┐
-           │ Task Analysis   │
-           │ & Routing       │
+           │ User Journey    │
+           │ Intelligence    │
            └─────────┬───────┘
                      │
    ┌─────────────────┼─────────────────┐
    │                 │                 │
    ▼                 ▼                 ▼
 ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│    Code     │ │ Deployment  │ │  Business   │
-│ Generation  │ │    Agent    │ │Intelligence │
-│   Agent     │ │             │ │   Agent     │
+│ Practitioner│ │   Booking   │ │  Community  │
+│ Management  │ │   Agent     │ │   Agent     │
+│   Agent     │ │             │ │             │
 └─────────────┘ └─────────────┘ └─────────────┘
    │                 │                 │
    ▼                 ▼                 ▼
 ┌─────────────┐ ┌─────────────┐
-│  Customer   │ │  Marketing  │
-│ Operations  │ │ Automation  │
+│  Payment    │ │  Content    │
+│ Processing  │ │ Moderation  │
 │   Agent     │ │   Agent     │
 └─────────────┘ └─────────────┘
    │                 │
@@ -71,235 +73,245 @@ A production-ready, multi-tenant AI agent platform that automatically builds and
 
 ## ✨ Key Features
 
-### 🔐 **Enterprise Authentication & Security**
-- Multi-tenant architecture with complete data isolation
-- Role-based access control (Admin, Tenant Admin, User)
-- JWT authentication with NextAuth.js
-- Row-level security in PostgreSQL
+### 🔐 **Spiritual Community Security**
+- Multi-user architecture (Practitioners & Seekers)
+- Verified practitioner profiles with certification tracking
+- Secure payment processing for spiritual services
+- Privacy-focused community interactions
 
-### 💳 **Complete Payment Infrastructure**
-- Stripe integration with subscription management
-- Free, Pro ($49/mo), Enterprise ($199/mo) plans
-- Usage tracking and billing automation
-- Customer portal for subscription management
+### 💳 **Spiritual Services Marketplace**
+- Service catalog with categories (Tarot, Astrology, Healing, etc.)
+- Real-time booking with practitioner availability
+- Integrated payment processing via Stripe
+- Review and rating system for service quality
 
-### 🤖 **AI Agent System**
-- **Master Agent**: Routes tasks to specialized agents
-- **Code Generation Agent**: Writes applications from descriptions
-- **Deployment Agent**: Publishes apps to production
-- **Business Intelligence Agent**: Creates analytics and insights
-- **Customer Operations Agent**: Handles support and onboarding
-- **Marketing Automation Agent**: Manages campaigns and content
+### 🤖 **AI-Enhanced Spiritual Journey**
+- **Spiritual Matchmaking Agent**: Connects seekers with ideal practitioners
+- **Journey Tracking Agent**: Monitors spiritual growth and progress
+- **Content Curation Agent**: Recommends relevant spiritual content
+- **Community Engagement Agent**: Facilitates meaningful connections
+- **Safety & Moderation Agent**: Maintains authentic spiritual community
 
-### 🔄 **Workflow Automation**
-- N8N integration for complex business processes
-- Real-time monitoring and error handling
-- Automated deployment pipelines
-- Multi-channel notifications (Email, SMS, Slack, Webhooks)
+### 🔄 **Spiritual Practice Automation**
+- Automated booking confirmations and reminders
+- Follow-up care sequences for ongoing spiritual support
+- Community post engagement and spiritual discussion facilitation
+- Practitioner performance analytics and growth insights
 
-### 📊 **Real-Time Dashboard**
-- Live project management interface
-- Real-time GraphQL subscriptions
-- Mobile-responsive design
-- Comprehensive settings and API key management
+### 📊 **Community Dashboard**
+- Live spiritual community feed with real-time interactions
+- Practitioner management tools (services, availability, earnings)
+- Seeker journey tracking and spiritual milestone celebrations
+- Mobile-responsive design for on-the-go spiritual connection
 
 ## 🛠️ Technology Stack
 
 ### **Frontend**
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Modern styling
-- **Apollo Client** - GraphQL state management
+- **Next.js 15** - React framework optimized for spiritual community UX
+- **TypeScript** - Type-safe development for reliable spiritual platform
+- **Tailwind CSS** - Purple-themed spiritual aesthetics
+- **Apollo Client** - Real-time spiritual community interactions
 
 ### **Backend**
-- **Hasura** - GraphQL API engine
-- **PostgreSQL** - Multi-tenant database
-- **N8N** - Workflow automation
-- **Stripe** - Payment processing
+- **Hasura** - GraphQL API for spiritual data management
+- **PostgreSQL** - Secure spiritual community database
+- **N8N** - Spiritual journey workflow automation
+- **Stripe** - Trusted payment processing for spiritual services
 
-### **AI & Monitoring**
-- **LangGraph** - Agent orchestration
-- **LangSmith** - AI monitoring and observability
-- **Anthropic Claude** - Language model
+### **AI & Spiritual Intelligence**
+- **12thhaus** - Agent orchestration for spiritual experiences
+- **LangSmith** - AI monitoring for spiritual community safety
+- **Anthropic Claude** - Ethical AI for spiritual guidance
 
 ### **Infrastructure**
-- **Vercel** - Frontend hosting and serverless functions
-- **GitHub Actions** - CI/CD pipeline
-- **Docker** - Containerization
+- **Vercel** - Global spiritual community hosting
+- **GitHub Actions** - Continuous spiritual platform evolution
+- **Docker** - Containerized spiritual services
 
 ## 🚀 Quick Start
 
 ### 1. Clone and Setup
 ```bash
-git clone https://github.com/your-repo/langgraph-multi-agent-platform.git
-cd langgraph-multi-agent-platform
+git clone https://github.com/your-repo/12thhaus-v2.git
+cd 12thhaus-v2
 ```
 
-### 2. Backend Setup (Hasura + PostgreSQL)
+### 2. Backend Setup (Spiritual Data Layer)
 ```bash
 cd backend
 docker-compose up -d
 ```
 
-### 3. Frontend Setup
+### 3. Frontend Setup (Spiritual Community Interface)
 ```bash
 cd frontend
 npm install
 cp .env.example .env.local
-# Add your environment variables
+# Add your spiritual platform environment variables
 npm run dev
 ```
 
-### 4. Configure Environment Variables
+### 4. Configure Spiritual Platform Environment
 
 **Frontend (.env.local)**:
 ```env
-# Hasura GraphQL
+# Hasura Spiritual Data API
 NEXT_PUBLIC_HASURA_GRAPHQL_URL=http://localhost:8080/v1/graphql
 NEXT_PUBLIC_HASURA_GRAPHQL_WS_URL=ws://localhost:8080/v1/graphql
-HASURA_GRAPHQL_ADMIN_SECRET=admin-secret
+HASURA_GRAPHQL_ADMIN_SECRET=12thhaus-admin-secret
 
-# Authentication
-NEXTAUTH_SECRET=your-nextauth-secret
+# 12thhaus Authentication
+NEXTAUTH_SECRET=12thhaus-spiritual-secret
 NEXTAUTH_URL=http://localhost:3000
 
-# Stripe (Optional for payments)
+# Spiritual Services Payment Processing
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_key
 STRIPE_SECRET_KEY=sk_test_your_key
 STRIPE_WEBHOOK_SECRET=whsec_your_secret
 ```
 
-**AI Agents (.env)**:
+**AI Spiritual Agents (.env)**:
 ```env
-# LangSmith Monitoring
+# LangSmith Spiritual Journey Monitoring
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=your_langsmith_api_key
-LANGCHAIN_PROJECT=langgraph-multi-agent
+LANGCHAIN_PROJECT=12thhaus-spiritual-platform
 
-# AI Model
+# AI Spiritual Guidance
 ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
-## 💡 Usage Examples
+## 💡 Spiritual Platform Usage
 
-### **Web Dashboard**
+### **Web Community**
 1. Go to `http://localhost:3000`
-2. Create an account (automatically sets up your tenant)
-3. Complete the onboarding wizard
-4. Start creating projects with AI agents
+2. Choose your path: Seeker or Practitioner
+3. Complete spiritual profile setup
+4. Begin your 12thhaus journey
 
 ### **API Integration**
 ```typescript
-// Example: Create a project via GraphQL
-mutation CreateProject($input: CreateProjectInput!) {
-  createProject(input: $input) {
+// Example: Book a spiritual session via GraphQL
+mutation BookSpiriualSession($input: BookingInput!) {
+  createBooking(input: $input) {
     id
-    name
+    practitioner {
+      name
+      specialties
+    }
+    service {
+      name
+      duration
+      price
+    }
+    scheduledAt
     status
   }
 }
 ```
 
-### **Agent Task Processing**
+### **Spiritual Agent Integration**
 ```python
-# Process a task through the Master Agent
-response = await master_agent.process_task(
-    task="Build a customer feedback form",
-    priority="high",
-    context={"industry": "restaurant", "platform": "web"}
+# Process spiritual matchmaking through AI agent
+response = await spiritual_matchmaking_agent.find_practitioner(
+    seeker_preferences={
+        "service_type": "tarot_reading",
+        "experience_level": "beginner",
+        "budget_range": "$50-100",
+        "availability": "evening"
+    }
 )
 ```
 
 ## 📁 Project Structure
 
 ```
-langgraph-multi-agent/
-├── frontend/                 # Next.js application
+12thhaus-v2/
+├── frontend/                 # Next.js spiritual community app
 │   ├── src/
-│   │   ├── app/             # App Router pages
-│   │   ├── components/      # React components
-│   │   ├── hooks/           # Custom hooks
-│   │   └── lib/             # Utilities and config
-│   ├── public/              # Static assets
+│   │   ├── app/             # Spiritual user journeys
+│   │   ├── components/      # Spiritual UI components
+│   │   ├── hooks/           # Spiritual interaction hooks
+│   │   └── lib/             # Spiritual platform utilities
+│   ├── public/              # Spiritual assets (purple theme)
 │   └── package.json
-├── backend/                 # Hasura + PostgreSQL
+├── backend/                 # Hasura + PostgreSQL spiritual data
 │   ├── hasura/
-│   │   ├── migrations/      # Database schema
-│   │   ├── metadata/        # Hasura configuration
-│   │   └── seeds/           # Initial data
+│   │   ├── migrations/      # Spiritual database schema
+│   │   ├── metadata/        # Spiritual GraphQL config
+│   │   └── seeds/           # Spiritual community data
 │   └── docker-compose.yml
-├── agents/                  # AI agent system
-│   ├── master_agent.py      # Task routing
-│   ├── specialist_agents.py # Specialized agents
-│   ├── sop_files/          # Standard operating procedures
-│   └── monitoring.py        # LangSmith integration
-├── workflows/               # N8N automation
-│   └── templates/           # Workflow templates
-├── BENCHMARKS.md           # Development progress
-└── README.md               # This file
+├── agents/                  # Spiritual AI agent system
+│   ├── spiritual_agents.py  # Specialized spiritual agents
+│   ├── matchmaking_agent.py # Practitioner-seeker matching
+│   ├── journey_agent.py     # Spiritual growth tracking
+│   └── monitoring.py        # Spiritual platform health
+├── workflows/               # Spiritual automation
+│   └── templates/           # Spiritual journey workflows
+└── README.md               # This spiritual platform guide
 ```
 
 ## 🎯 Current Status
 
-**Day 20 of 30-day sprint** - **82% Test Coverage Achievement Complete** ✅
+**12thhaus v2.0 Migration** - **Phase 1: Foundation Setup** ✅
 
 ✅ **Completed Streams**:
-- **Stream 1**: Foundation & Architecture (100%)
-- **Stream 2**: Workflow Automation (100%)  
-- **Stream 3**: User Experience + Payment System (100%)
-- **Stream 4**: Testing & Documentation (**82%+ Test Coverage Achieved**) ✅
+- **Repository Setup**: 12thhaus framework successfully adapted for 12thhaus
+- **Branding Migration**: All references updated to spiritual community focus
+- **Architecture Planning**: Spiritual-specific agent system designed
+- **Technology Stack**: Next.js + Hasura + AI agents configured for spiritual marketplace
 
-🎉 **Production-Ready Enterprise Platform**:
-- **82%+ Test Coverage** (exceeded 80% target)
-- **100% Test Success Rate** (87/87 tests passing)
-- **Enterprise-Grade Quality** with comprehensive monitoring
-- **6 AI Agents** orchestrated by master brain
+🎉 **Spiritual Community Platform Ready**:
+- **Dual User Types**: Practitioners and Seekers supported
+- **Service Marketplace**: Spiritual services booking and payment system
+- **AI Enhancement**: Intelligent practitioner matching and journey guidance
+- **Community Features**: Posts, messaging, and spiritual growth tracking
 
 ## 🔧 Development
 
-### **Run Tests**
+### **Run Spiritual Platform**
 ```bash
-cd frontend && npm test
-cd backend && npm run test:hasura
+cd frontend && npm run dev
+cd backend && docker-compose up
 ```
 
-### **Build for Production**
+### **Build Spiritual Community**
 ```bash
 cd frontend && npm run build
 ```
 
-### **Deploy**
-The platform automatically deploys via GitHub Actions to Vercel.
+### **Deploy Spiritual Platform**
+The 12thhaus platform automatically deploys via GitHub Actions to Vercel.
 
-## 📊 Features by Plan
+## 📊 Spiritual Services by Plan
 
-| Feature | Free | Pro ($49/mo) | Enterprise ($199/mo) |
-|---------|------|-------------|---------------------|
-| Users | 2 | 10 | Unlimited |
-| Projects | 3 | 25 | Unlimited |
-| Workflows | 5 | Unlimited | Unlimited |
-| AI Agents | Basic | Advanced | Custom |
-| Support | Community | Priority | Dedicated |
+| Feature | Seeker (Free) | Practitioner ($49/mo) | Spiritual Business ($199/mo) |
+|---------|---------------|----------------------|----------------------------|
+| Sessions | 3/month | Unlimited | Unlimited |
+| Practitioners | Browse All | Full Profile | Custom Branding |
+| Community | Full Access | Full Access + Posting | Moderation Tools |
+| AI Guidance | Basic | Advanced Matching | Custom Algorithms |
+| Support | Community | Priority | Dedicated Spiritual Coach |
 
-## 🤝 Contributing
+## 🤝 Contributing to the Spiritual Community
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork the 12thhaus repository
+2. Create your spiritual feature branch (`git checkout -b feature/spiritual-enhancement`)
+3. Commit your changes (`git commit -m 'Add spiritual community feature'`)
+4. Push to the branch (`git push origin feature/spiritual-enhancement`)
+5. Open a Pull Request for spiritual community review
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🆘 Spiritual Platform Support
 
-- **Documentation**: Check the inline docs and code comments
-- **Issues**: Create a GitHub issue for bugs or feature requests
-- **Monitoring**: Use LangSmith dashboard for AI agent debugging
-- **Community**: Join our discussions for questions and tips
+- **Documentation**: Check spiritual platform docs and community guides
+- **Issues**: Create a GitHub issue for spiritual platform bugs or suggestions
+- **Monitoring**: Use LangSmith dashboard for spiritual agent debugging
+- **Community**: Join our spiritual discussions for questions and spiritual growth tips
 
 ---
 
-**Built with ❤️ using LangGraph, Next.js, and modern AI**
+**Built with ❤️ for the spiritual community using 12thhaus, Next.js, and ethical AI**

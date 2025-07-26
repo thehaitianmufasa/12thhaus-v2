@@ -1,6 +1,6 @@
 """
 Performance Testing Suite using k6
-Load testing and performance benchmarking for LangGraph platform
+Load testing and performance benchmarking for 12thhaus platform
 """
 
 // K6 Load Test Configuration
@@ -37,7 +37,7 @@ export const options = {
   ext: {
     loadimpact: {
       projectID: 123456,
-      name: 'LangGraph Platform Load Test',
+      name: '12thhaus Platform Load Test',
       distribution: {
         'amazon:us:ashburn': { loadZone: 'amazon:us:ashburn', percent: 50 },
         'amazon:eu:dublin': { loadZone: 'amazon:eu:dublin', percent: 30 },

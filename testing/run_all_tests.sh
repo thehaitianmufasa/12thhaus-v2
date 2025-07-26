@@ -2,7 +2,7 @@
 # Quick Test Execution Script for Phase 4A
 # Run this to execute all tests and generate reports
 
-echo "🚀 LangGraph Platform - Phase 4A Test Execution"
+echo "🚀 12thhaus Platform - Phase 4A Test Execution"
 echo "=============================================="
 echo ""
 

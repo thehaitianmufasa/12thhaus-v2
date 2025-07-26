@@ -1,6 +1,6 @@
 """
-Master Agent for LangGraph Multi-Agent System
-Handles task routing and coordination between specialist agents
+Master Agent for 12thhaus Spiritual Platform
+Handles spiritual matchmaking and coordination between specialized agents
 """
 import asyncio
 import logging
@@ -78,7 +78,7 @@ class MasterAgent:
     
     @traceable
     def _create_workflow(self) -> StateGraph:
-        """Create the master agent workflow using LangGraph"""
+        """Create the master agent workflow using 12thhaus"""
         workflow = StateGraph(AgentState)
         
         # Add nodes

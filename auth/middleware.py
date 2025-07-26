@@ -1,5 +1,5 @@
 """  
-Authentication middleware for LangGraph Multi-Agent Platform
+Authentication middleware for 12thhaus Spiritual Platform
 Provides JWT validation and organization context extraction
 """
 import json

@@ -32,15 +32,15 @@
 - Coordinate with Desktop Claude for strategic decisions
 
 ## Project Context Awareness
-- **Platform**: LangGraph Multi-Agent Platform (Production-Ready)
+- **Platform**: 12thhaus Spiritual Platform (Production-Ready)
 - **Status**: 82% test coverage, 87/87 tests passing
 - **Architecture**: 6 AI agents orchestrated by master brain
 - **Target Market**: Enterprise customers ($2.5K-$50K/month)
-- **Repository**: https://github.com/thehaitianmufasa/langgraph-multi-agent-platform
+- **Repository**: https://github.com/thehaitianmufasa/12thhaus-spiritual-platform
 
 ## API Secrets & Configuration
 - **Location**: ~/Desktop/PROJECT_SECRETS_REFERENCE.txt
-- **Contains**: LangGraph Platform keys, Biddy APIs, Infrastructure secrets
+- **Contains**: 12thhaus Platform keys, Biddy APIs, Infrastructure secrets
 - **Access Method**: Always read from desktop file, never hardcode
 - **Security**: Local file only, never commit to version control
 
@@ -54,8 +54,8 @@
 - **Apify Scraping MCP**: Data collection, web scraping automation
 
 ## Key Project Directories
-- **Main Platform**: /Users/mufasa/langgraph-multi-agent-platform/ (Clean base)
-- **Biddy Development**: /Users/mufasa/langgraph-multi-agent-platform-biddy/
+- **Main Platform**: /Users/mufasa/12thhaus-spiritual-platform/ (Clean base)
+- **Biddy Development**: /Users/mufasa/12thhaus-spiritual-platform-biddy/
 - **Task Master**: /Users/mufasa/claude-task-master/ (Strategic planning)
 - **PRP Templates**: /Users/mufasa/prps-agentic-eng/ (Implementation context)
 - **Backup**: gs://brainsnax-backups/ (Google Cloud auto-backup)

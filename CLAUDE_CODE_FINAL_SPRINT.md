@@ -100,7 +100,7 @@ app = FastAPI()
 
 def generate_openapi_schema():
     openapi_schema = get_openapi(
-        title="LangGraph Multi-Agent Platform API",
+        title="12thhaus Spiritual Platform API",
         version="1.0.0",
         description="AI Agent Orchestration Platform",
         routes=app.routes,
@@ -217,7 +217,7 @@ tar -czf langgraph-platform-v1.0.tar.gz \
 # Generate deployment manifest
 cat > deploy.yaml << 'EOF'
 version: "1.0"
-name: langgraph-multi-agent-platform
+name: 12thhaus-spiritual-platform
 services:
   api:
     build: .

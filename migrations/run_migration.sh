@@ -53,7 +53,7 @@ fi
 
 # Function to print usage
 print_usage() {
-    echo -e "${BLUE}Migration Runner for LangGraph Multi-Agent Platform${NC}"
+    echo -e "${BLUE}Migration Runner for 12thhaus Spiritual Platform${NC}"
     echo ""
     echo "Usage: $0 [ACTION] [VERSION] [ENVIRONMENT]"
     echo ""

@@ -8,13 +8,13 @@ mkdir -p .claude_memory
 # Create persistent context file
 cat > .claude_memory/persistent_context.json << 'CONTEXT'
 {
-  "project_name": "LangGraph Multi-Agent Platform",
+  "project_name": "12thhaus Spiritual Platform",
   "status": "production_ready",
   "test_coverage": "82%",
   "test_status": "87/87_passing",
   "last_updated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "secrets_location": "~/Desktop/PROJECT_SECRETS_REFERENCE.txt",
-  "main_directory": "/Users/mufasa/langgraph-multi-agent-platform/",
+  "main_directory": "/Users/mufasa/12thhaus-spiritual-platform/",
   "verification_protocol": "DEV_VERIFICATION_PROTOCOL.md",
   "guidelines_file": "CLAUDE_CODE_DEVELOPMENT_GUIDELINES.md"
 }

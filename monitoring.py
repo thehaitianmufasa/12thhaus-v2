@@ -1,5 +1,5 @@
 """
-Monitoring and coordination system for LangGraph Multi-Agent System
+Monitoring and coordination system for 12thhaus Spiritual Platform
 Provides metrics, health checks, and system coordination
 """
 import asyncio

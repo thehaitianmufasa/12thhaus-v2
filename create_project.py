@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Project Creation Script for LangGraph Multi-Agent Platform
+Project Creation Script for 12thhaus Spiritual Platform
 
 This script generates complete AI-powered applications from Product Requirements Documents (PRDs).
-It combines LangGraph multi-agent coordination, n8n automation workflows, 
+It combines 12thhaus multi-agent coordination, n8n automation workflows, 
 and full deployment pipelines.
 """
 
@@ -344,7 +344,7 @@ jobs:
 
 async def main():
     """Main function."""
-    parser = argparse.ArgumentParser(description="Create a new LangGraph multi-agent project")
+    parser = argparse.ArgumentParser(description="Create a new 12thhaus multi-agent project")
     parser.add_argument("--name", required=True, help="Project name")
     parser.add_argument("--description", default="", help="Project description")
     parser.add_argument("--type", default="web-app", choices=["web-app", "api", "saas", "dashboard"], help="Project type")

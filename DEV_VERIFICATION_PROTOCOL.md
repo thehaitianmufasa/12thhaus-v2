@@ -1,5 +1,5 @@
 # 🔍 DEV VERIFICATION PROTOCOL
-**LangGraph Multi-Agent Platform - Development Status & Verification Guide**
+**12thhaus Spiritual Platform - Development Status & Verification Guide**
 
 ---
 
@@ -33,7 +33,7 @@
 ### **Core System Verification**
 ```bash
 # Navigate to project directory
-cd /Users/mufasa/langgraph-multi-agent-platform
+cd /Users/mufasa/12thhaus-spiritual-platform
 
 # Verify current location and repository
 echo "=== PROJECT VERIFICATION ===" 
@@ -235,7 +235,7 @@ fi
 - **Logto Documentation:** https://docs.logto.io/
 - **Next.js 15 Guide:** https://nextjs.org/docs
 - **Hasura JWT:** https://hasura.io/docs/auth/authentication/jwt/
-- **Repository:** https://github.com/thehaitianmufasa/langgraph-multi-agent-platform
+- **Repository:** https://github.com/thehaitianmufasa/12thhaus-spiritual-platform
 
 ---
 

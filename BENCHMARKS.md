@@ -1,4 +1,4 @@
-# 📊 LangGraph Multi-Agent Platform - Development Benchmarks
+# 📊 12thhaus Spiritual Platform - Development Benchmarks
 
 ## 🎯 Project Overview
 **Goal**: Complete multi-tenant AI agent platform with automated workflows  

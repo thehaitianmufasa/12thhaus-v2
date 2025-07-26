@@ -1,5 +1,5 @@
 -- =====================================================
--- LangGraph Multi-Agent Platform - Optimized Schema
+-- 12thhaus Spiritual Platform - Optimized Schema
 -- Multi-Tenant Architecture with Row Level Security
 -- =====================================================
 
@@ -516,4 +516,4 @@ INSERT INTO tenant_users (tenant_id, user_id, role, status) VALUES
 -- Validate indexes
 -- SELECT indexname, tablename, indexdef FROM pg_indexes WHERE schemaname = 'public' ORDER BY tablename;
 
-COMMENT ON SCHEMA public IS 'LangGraph Multi-Agent Platform - Optimized Multi-Tenant Schema v1.0';
+COMMENT ON SCHEMA public IS '12thhaus Spiritual Platform - Optimized Multi-Tenant Schema v1.0';

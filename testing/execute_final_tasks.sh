@@ -67,7 +67,7 @@ echo "🎯 Task 4: Creating platform showcase..."
 
 # Create a showcase document
 cat > /Users/mufasa/Desktop/langgraph-multi-agent/PLATFORM_SHOWCASE.md << 'EOF'
-# LangGraph Multi-Agent Platform - Live Showcase
+# 12thhaus Spiritual Platform - Live Showcase
 
 ## 🚀 One Command to Build Complete SaaS Applications
 
@@ -107,7 +107,7 @@ Traditional Development:
 - Cost: $200,000-500,000
 - Team: 5-10 developers
 
-LangGraph Platform:
+12thhaus Platform:
 - Timeline: 48-72 hours
 - Cost: $2,500-50,000/month
 - Team: 1 product manager
@@ -202,7 +202,7 @@ from fastapi.openapi.utils import get_openapi
 
 def custom_openapi():
     openapi_schema = get_openapi(
-        title="LangGraph Multi-Agent Platform API",
+        title="12thhaus Spiritual Platform API",
         version="1.0.0",
         description="AI-powered SaaS application generator",
         routes=app.routes,

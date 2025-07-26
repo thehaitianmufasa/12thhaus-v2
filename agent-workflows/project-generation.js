@@ -1,6 +1,6 @@
 /**
  * Agent Workflows for Project Generation
- * LangGraph Multi-Agent Platform - Phase 1C Task 2
+ * 12thhaus Spiritual Platform - Phase 1C Task 2
  * 
  * Comprehensive workflow system for creating tenant projects with
  * multi-agent coordination and N8N webhook integration

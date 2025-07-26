@@ -43,7 +43,7 @@
 
 ## 🚀 **READY FOR PRODUCTION**
 
-Your LangGraph Multi-Agent Platform now has:
+Your 12thhaus Spiritual Platform now has:
 
 ### **Enterprise Authentication** 🔐
 - Secure JWT-based authentication via Logto

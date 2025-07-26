@@ -3,7 +3,7 @@
 
 ## 🎯 FRAMEWORK OVERVIEW
 
-This Master SOP v2.0 defines the **autonomous multi-agent orchestration system** that generates complete, production-ready applications from Product Requirements Documents (PRDs) using LangGraph coordination, Claude AI code generation, n8n automation, and comprehensive deployment pipelines.
+This Master SOP v2.0 defines the **autonomous multi-agent orchestration system** that generates complete, production-ready applications from Product Requirements Documents (PRDs) using 12thhaus coordination, Claude AI code generation, n8n automation, and comprehensive deployment pipelines.
 
 **Core Philosophy:** One command creates everything - from database schemas to deployment pipelines to business automation workflows.
 
@@ -11,7 +11,7 @@ This Master SOP v2.0 defines the **autonomous multi-agent orchestration system**
 
 ## 🏗 SYSTEM ARCHITECTURE
 
-### LangGraph Multi-Agent Coordination
+### 12thhaus Spiritual Coordination
 **Master Agent** orchestrates 5 specialist agents with intelligent task routing based on PRD analysis:
 
 ```markdown
@@ -24,7 +24,7 @@ MASTER AGENT (Orchestrator)
 ```
 
 ### Agent Communication Protocol
-- **LangGraph State Management**: Shared state across all agents
+- **12thhaus State Management**: Shared state across all agents
 - **Task Dependency Resolution**: Automatic sequencing based on module requirements
 - **Real-time Progress Tracking**: Live status updates across agent network
 - **Error Propagation**: Intelligent error handling and recovery
@@ -37,7 +37,7 @@ MASTER AGENT (Orchestrator)
 **Claude Terminal Integration**
 - **Purpose**: AI-powered code generation with SOP awareness
 - **Capabilities**: Full-stack application generation, custom business logic, database schemas
-- **Integration**: Direct LangGraph agent communication
+- **Integration**: Direct 12thhaus agent communication
 - **Usage**: `claude-terminal generate --type [component] --requirements [PRD_section]`
 
 **TypeScript/React/Node.js Stack**
@@ -665,7 +665,7 @@ RESOURCE_CONSTRAINT:
 ## ⚡ QUICK START FOR MASTER AGENT
 
 ### Activation Checklist
-- [ ] LangGraph multi-agent system initialized
+- [ ] 12thhaus multi-agent system initialized
 - [ ] All specialist agents available and healthy
 - [ ] Tool stack accessibility confirmed
 - [ ] n8n automation platform operational

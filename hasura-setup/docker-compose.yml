@@ -1,6 +1,6 @@
 # =====================================================
-# Docker Compose for Hasura + Supabase Integration
-# LangGraph Multi-Agent Platform
+# Docker Compose for 12thhaus Spiritual Platform
+# Hasura + PostgreSQL Integration
 # =====================================================
 
 version: '3.8'
@@ -9,7 +9,7 @@ services:
   # Hasura GraphQL Engine
   hasura:
     image: hasura/graphql-engine:v2.33.4
-    container_name: langgraph-hasura
+    container_name: 12thhaus-hasura
     ports:
       - "8080:8080"
     environment:
@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
     
     networks:
-      - langgraph-network
+      - 12thhaus-network
     
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
@@ -65,14 +65,14 @@ services:
   # Redis for caching and session management
   redis:
     image: redis:7-alpine
-    container_name: langgraph-redis
+    container_name: 12thhaus-redis
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_data:/data
     networks:
-      - langgraph-network
+      - 12thhaus-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -83,7 +83,7 @@ services:
   # Nginx reverse proxy (optional)
   nginx:
     image: nginx:alpine
-    container_name: langgraph-nginx
+    container_name: 12thhaus-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -93,13 +93,13 @@ services:
     depends_on:
       - hasura
     networks:
-      - langgraph-network
+      - 12thhaus-network
     restart: unless-stopped
 
   # Monitoring with Prometheus (optional)
   prometheus:
     image: prom/prometheus:latest
-    container_name: langgraph-prometheus
+    container_name: 12thhaus-prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -112,13 +112,13 @@ services:
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
     networks:
-      - langgraph-network
+      - 12thhaus-network
     restart: unless-stopped
 
   # Grafana for monitoring dashboards (optional)
   grafana:
     image: grafana/grafana:latest
-    container_name: langgraph-grafana
+    container_name: 12thhaus-grafana
     ports:
       - "3001:3000"
     environment:
@@ -129,7 +129,7 @@ services:
     depends_on:
       - prometheus
     networks:
-      - langgraph-network
+      - 12thhaus-network
     restart: unless-stopped
 
 # =====================================================
@@ -149,7 +149,7 @@ volumes:
 # =====================================================
 
 networks:
-  langgraph-network:
+  12thhaus-network:
     driver: bridge
     ipam:
       config:

@@ -1,5 +1,5 @@
 """
-Organization management for the LangGraph Multi-Agent Platform.
+Organization management for the 12thhaus Spiritual Platform.
 
 This module handles organization creation, member management, role assignments,
 and invitation system for multi-tenant support.

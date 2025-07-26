@@ -1,5 +1,5 @@
 """
-Test Configuration for LangGraph Multi-Agent Platform
+Test Configuration for 12thhaus Spiritual Platform
 Phase 4A Testing Infrastructure
 """
 import os

@@ -3,7 +3,7 @@
 # Quick memory refresh for Claude Code
 memory_refresh() {
     echo "=== Claude Code Memory Refresh ==="
-    echo "Project: LangGraph Multi-Agent Platform"
+    echo "Project: 12thhaus Spiritual Platform"
     echo "Status: Production-Ready (82% test coverage)"
     echo "Guidelines: ./CLAUDE_CODE_DEVELOPMENT_GUIDELINES.md"
     echo "Secrets: ~/Desktop/PROJECT_SECRETS_REFERENCE.txt"
@@ -25,11 +25,11 @@ update_status() {
 
 # Quick project summary
 project_summary() {
-    echo "=== LangGraph Multi-Agent Platform ==="
+    echo "=== 12thhaus Spiritual Platform ==="
     echo "Architecture: 6 AI agents with master orchestration"
     echo "Test Coverage: 82% (87/87 tests passing)"
     echo "Target Market: Enterprise ($2.5K-$50K/month)"
-    echo "Repository: github.com/thehaitianmufasa/langgraph-multi-agent-platform"
+    echo "Repository: github.com/thehaitianmufasa/12thhaus-spiritual-platform"
     echo "====================================="
 }
 

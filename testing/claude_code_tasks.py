@@ -150,7 +150,7 @@ async def health_check(self):
 ```python
 async def run_full_audit(self):
     """Execute complete security audit"""
-    print("🔒 Starting Security Audit for LangGraph Platform\n")
+    print("🔒 Starting Security Audit for 12thhaus Platform\n")
     
     # OWASP Top 10 Tests
     await self.test_injection_vulnerabilities()

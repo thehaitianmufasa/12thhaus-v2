@@ -1,5 +1,5 @@
 """
-Vercel-compatible authentication decorators for LangGraph Multi-Agent Platform.
+Vercel-compatible authentication decorators for 12thhaus Spiritual Platform.
 
 This module provides authentication decorators that work with Vercel's
 BaseHTTPRequestHandler pattern for serverless functions.

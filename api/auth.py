@@ -1,5 +1,5 @@
 """
-Authentication API endpoints for the LangGraph Multi-Agent Platform.
+Authentication API endpoints for the 12thhaus Spiritual Platform.
 
 This module provides Flask-based API endpoints for user authentication
 including login, logout, callback, and user information.

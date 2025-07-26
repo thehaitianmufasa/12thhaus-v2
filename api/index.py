@@ -5,7 +5,7 @@ from datetime import datetime
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         response_data = {
-            "service": "LangGraph Multi-Agent System",
+            "service": "12thhaus Spiritual Platform",
             "version": "1.0.0",
             "status": "active",
             "timestamp": datetime.now().isoformat(),
@@ -14,7 +14,7 @@ class handler(BaseHTTPRequestHandler):
                 "/status": "System status and metrics",
                 "/task": "Task processing endpoint (POST)"
             },
-            "documentation": "https://github.com/your-repo/langgraph-multi-agent",
+            "documentation": "https://github.com/your-repo/12thhaus-spiritual",
             "langsmith_integration": "enabled",
             "deployment": "vercel"
         }

@@ -2,7 +2,7 @@
 
 ## ✅ Setup Complete
 
-Your LangGraph Multi-Agent System is now ready for deployment with:
+Your 12thhaus Spiritual Platform is now ready for deployment with:
 - **GitHub Actions CI/CD Pipeline**
 - **Vercel Serverless Deployment**
 - **LangSmith Monitoring Integration**
@@ -15,7 +15,7 @@ Your LangGraph Multi-Agent System is now ready for deployment with:
 # Initialize git if not already done
 git init
 git add .
-git commit -m "Initial commit: LangGraph Multi-Agent System"
+git commit -m "Initial commit: 12thhaus Spiritual Platform"
 
 # Create GitHub repository and push
 gh repo create langgraph-multi-agent --public
@@ -203,4 +203,4 @@ vercel rollback DEPLOYMENT_URL
 
 ---
 
-Your LangGraph Multi-Agent System is now production-ready! 🎉
+Your 12thhaus Spiritual Platform is now production-ready! 🎉

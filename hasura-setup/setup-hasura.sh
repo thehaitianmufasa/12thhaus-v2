@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =====================================================
-# Hasura Setup Script for LangGraph Multi-Agent Platform
+# Hasura Setup Script for 12thhaus Spiritual Platform
 # Automates Hasura connection to Supabase
 # =====================================================
 
@@ -297,7 +297,7 @@ cleanup() {
 main() {
     trap cleanup EXIT
     
-    echo "🚀 Hasura + Supabase Setup for LangGraph Multi-Agent Platform"
+    echo "🚀 Hasura + Supabase Setup for 12thhaus Spiritual Platform"
     echo "=============================================================="
     echo
     

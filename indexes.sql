@@ -1,6 +1,6 @@
 -- =====================================================
 -- Performance Indexes for Multi-Tenant Architecture
--- LangGraph Multi-Agent Platform
+-- 12thhaus Spiritual Platform
 -- Optimized for tenant isolation and query performance
 -- =====================================================
 

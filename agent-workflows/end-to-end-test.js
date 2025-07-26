@@ -1,6 +1,6 @@
 /**
  * End-to-End Testing Suite for MCP Agent Workflows
- * LangGraph Multi-Agent Platform - Phase 1C Task 4
+ * 12thhaus Spiritual Platform - Phase 1C Task 4
  * 
  * Comprehensive testing of project creation workflow with
  * multi-tenant isolation verification and PRD processing

@@ -224,7 +224,7 @@
             },
             {
               "name": "description",
-              "value": "LangGraph Platform Integration for {{ $('webhook-integration-trigger').item.json.tenant_id }}"
+              "value": "12thhaus Spiritual Platform Integration for {{ $('webhook-integration-trigger').item.json.tenant_id }}"
             }
           ]
         },
@@ -360,7 +360,7 @@
             },
             {
               "name": "description",
-              "value": "LangGraph Platform Integration"
+              "value": "12thhaus Spiritual Platform Integration"
             }
           ]
         },

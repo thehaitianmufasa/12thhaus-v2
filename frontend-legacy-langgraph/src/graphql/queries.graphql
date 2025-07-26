@@ -1,0 +1,267 @@
+# =====================================================
+# Core Project Queries
+# =====================================================
+
+query GetUserProjects($tenant_id: uuid!, $limit: Int = 20) {
+  projects(
+    where: {tenant_id: {_eq: $tenant_id}, status: {_neq: "archived"}}
+    order_by: {updated_at: desc}
+    limit: $limit
+  ) {
+    id
+    name
+    description
+    status
+    created_at
+    updated_at
+    tech_stack
+    repository_url
+    deployment_url
+    tenant_id
+    created_by
+    agents_aggregate {
+      aggregate {
+        count
+      }
+    }
+    workflows_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+
+query GetProjectDetails($project_id: uuid!, $tenant_id: uuid!) {
+  project: projects_by_pk(id: $project_id) {
+    id
+    name
+    description
+    status
+    created_at
+    updated_at
+    tech_stack
+    repository_url
+    deployment_url
+    tenant_id
+    created_by
+    agents {
+      id
+      name
+      type
+      status
+      configuration
+      created_at
+      updated_at
+    }
+    workflows {
+      id
+      name
+      description
+      status
+      trigger_type
+      configuration
+      created_at
+      updated_at
+      workflow_executions_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}
+
+query GetUserDashboard($tenant_id: uuid!) {
+  projects_aggregate(where: {tenant_id: {_eq: $tenant_id}}) {
+    aggregate {
+      count
+    }
+  }
+  agents_aggregate(where: {tenant_id: {_eq: $tenant_id}}) {
+    aggregate {
+      count
+    }
+  }
+  workflows_aggregate(where: {tenant_id: {_eq: $tenant_id}}) {
+    aggregate {
+      count
+    }
+  }
+  workflow_executions_aggregate(
+    where: {
+      tenant_id: {_eq: $tenant_id}
+      started_at: {_gte: "2025-01-01"}
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  recent_projects: projects(
+    where: {tenant_id: {_eq: $tenant_id}}
+    order_by: {updated_at: desc}
+    limit: 5
+  ) {
+    id
+    name
+    status
+    updated_at
+  }
+}
+
+# =====================================================
+# Agent Management Queries
+# =====================================================
+
+query GetProjectAgents($project_id: uuid!, $tenant_id: uuid!) {
+  agents(
+    where: {project_id: {_eq: $project_id}, tenant_id: {_eq: $tenant_id}}
+    order_by: {created_at: desc}
+  ) {
+    id
+    name
+    type
+    status
+    configuration
+    created_at
+    updated_at
+    project {
+      id
+      name
+    }
+  }
+}
+
+query GetAgentDetails($agent_id: uuid!, $tenant_id: uuid!) {
+  agent: agents_by_pk(id: $agent_id) {
+    id
+    name
+    type
+    status
+    configuration
+    created_at
+    updated_at
+    tenant_id
+    project_id
+    project {
+      id
+      name
+      status
+    }
+  }
+}
+
+# =====================================================
+# Workflow Management Queries
+# =====================================================
+
+query GetProjectWorkflows($project_id: uuid!, $tenant_id: uuid!) {
+  workflows(
+    where: {project_id: {_eq: $project_id}, tenant_id: {_eq: $tenant_id}}
+    order_by: {created_at: desc}
+  ) {
+    id
+    name
+    description
+    status
+    trigger_type
+    configuration
+    created_at
+    updated_at
+    project {
+      id
+      name
+    }
+    workflow_executions_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+
+query GetWorkflowExecutions($workflow_id: uuid!, $tenant_id: uuid!, $limit: Int = 50) {
+  workflow_executions(
+    where: {workflow_id: {_eq: $workflow_id}, tenant_id: {_eq: $tenant_id}}
+    order_by: {started_at: desc}
+    limit: $limit
+  ) {
+    id
+    status
+    started_at
+    completed_at
+    execution_time_ms
+    input_data
+    output_data
+    error_message
+    workflow {
+      id
+      name
+    }
+  }
+}
+
+# =====================================================
+# User & Tenant Queries
+# =====================================================
+
+query GetTenantDetails($tenant_id: uuid!) {
+  tenant: tenants_by_pk(id: $tenant_id) {
+    id
+    name
+    domain
+    status
+    created_at
+    updated_at
+    subscription_plan
+    tenant_users_aggregate {
+      aggregate {
+        count
+      }
+    }
+    projects_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+
+query GetTenantUsers($tenant_id: uuid!) {
+  tenant_users(
+    where: {tenant_id: {_eq: $tenant_id}}
+    order_by: {joined_at: desc}
+  ) {
+    id
+    role
+    status
+    joined_at
+    user {
+      id
+      email
+      full_name
+      avatar_url
+    }
+  }
+}
+
+# =====================================================
+# Analytics & Usage Queries
+# =====================================================
+
+query GetTenantAnalytics($tenant_id: uuid!, $start_date: date!, $end_date: date!) {
+  usage_metrics(
+    where: {
+      tenant_id: {_eq: $tenant_id}
+      date: {_gte: $start_date, _lte: $end_date}
+    }
+    order_by: {date: desc}
+  ) {
+    metric_type
+    metric_name
+    value
+    date
+    dimensions
+  }
+}

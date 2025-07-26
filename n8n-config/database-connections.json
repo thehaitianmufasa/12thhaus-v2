@@ -1,5 +1,5 @@
 {
-  "name": "LangGraph Multi-Agent Platform - N8N Database Connections",
+  "name": "12thhaus Spiritual Platform - N8N Database Connections",
   "version": "1.0.0",
   "description": "Database connection configurations for N8N workflows with Supabase and Hasura integration",
   "configurations": {

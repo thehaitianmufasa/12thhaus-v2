@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Basic tests for the LangGraph Multi-Agent System
+Basic tests for the 12thhaus Spiritual Platform
 """
 import pytest
 import asyncio
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     # Run tests directly if called as script
     import sys
     
-    print("🧪 Running basic tests for LangGraph Multi-Agent System...")
+    print("🧪 Running basic tests for 12thhaus Spiritual Platform...")
     
     test_functions = [
         test_config_loading,

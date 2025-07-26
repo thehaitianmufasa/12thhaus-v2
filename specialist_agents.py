@@ -1,5 +1,5 @@
 """
-Specialist Agents for the LangGraph Multi-Agent System
+Specialist Agents for the 12thhaus Spiritual Platform
 Each agent handles specific domain tasks with SOP context
 """
 import asyncio

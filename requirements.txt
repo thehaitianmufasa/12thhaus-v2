@@ -1,4 +1,4 @@
-# Core LangGraph and LangChain
+# Core 12thhaus and LangChain
 langgraph>=0.5.2
 langsmith>=0.4.4
 langchain-anthropic>=0.3.17

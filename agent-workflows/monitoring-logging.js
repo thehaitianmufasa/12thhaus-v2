@@ -1,6 +1,6 @@
 /**
  * Monitoring and Logging System for MCP Agents
- * LangGraph Multi-Agent Platform - Phase 1C Task 3
+ * 12thhaus Spiritual Platform - Phase 1C Task 3
  * 
  * Comprehensive monitoring, logging, and error handling system
  * for MCP agent activities with tenant isolation

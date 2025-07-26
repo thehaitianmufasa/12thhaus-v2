@@ -191,7 +191,7 @@ class LighthouseRunner:
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LangGraph Platform - Lighthouse Performance Report</title>
+    <title>12thhaus Platform - Lighthouse Performance Report</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; }
@@ -210,7 +210,7 @@ class LighthouseRunner:
 </head>
 <body>
     <div class="container">
-        <h1>🚀 LangGraph Platform - Performance Audit Report</h1>
+        <h1>🚀 12thhaus Platform - Performance Audit Report</h1>
         <div class="summary">
             <h2>Summary</h2>
             <p>Generated: {timestamp}</p>

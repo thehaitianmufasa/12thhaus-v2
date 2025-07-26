@@ -1,6 +1,6 @@
 /**
  * MCP Bridge Integration with Supabase/Hasura
- * LangGraph Multi-Agent Platform - Phase 1C
+ * 12thhaus Spiritual Platform - Phase 1C
  * 
  * Connects MCP agents to the multi-tenant GraphQL infrastructure
  * with proper authentication and tenant context

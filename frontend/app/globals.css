@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Force light theme for spiritual platform */
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom spiritual theme enhancements */
+.spiritual-gradient {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+}
+
+.backdrop-blur-spiritual {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
