@@ -194,7 +194,18 @@ jobs:
         export NEXTAUTH_URL="https://placeholder.vercel.app"
         
         # Deploy to Vercel
-        vercel --token $VERCEL_TOKEN $DEPLOY_ENV --yes
+        if [ -z "$VERCEL_TOKEN" ]; then
+          echo "❌ VERCEL_TOKEN not found in repository secrets"
+          echo "📋 Add your Vercel token to repository secrets as VERCEL_TOKEN"
+          echo "🔗 Go to: https://github.com/thehaitianmufasa/12thhaus-v2/settings/secrets/actions"
+          exit 1
+        fi
+        
+        # Install dependencies first
+        npm install
+        
+        # Deploy to Vercel with production build
+        vercel --token="$VERCEL_TOKEN" $DEPLOY_ENV --yes
         
         echo "✅ Platform deployment completed"
         
