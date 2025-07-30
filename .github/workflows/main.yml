@@ -205,7 +205,7 @@ jobs:
         npm install
         
         # Deploy to Vercel with production build
-        vercel --token="$VERCEL_TOKEN" $DEPLOY_ENV --yes
+        vercel deploy $DEPLOY_ENV --token "$VERCEL_TOKEN" --yes
         
         echo "✅ Platform deployment completed"
         
