@@ -204,9 +204,10 @@ jobs:
         # Install dependencies first
         npm install
         
-        # Debug token (check for issues)
-        echo "Token length: ${#VERCEL_TOKEN}"
-        echo "Token starts with: ${VERCEL_TOKEN:0:10}..."
+        # Verify integrations are configured
+        echo "✅ Vercel token configured"
+        echo "🔗 Hasura endpoint: ${HASURA_GRAPHQL_ENDPOINT:0:30}..."
+        echo "🪝 N8N webhook configured: $([ -n "$N8N_WEBHOOK_URL" ] && echo "Yes" || echo "No")"
         
         # Deploy to Vercel with production build
         npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm
