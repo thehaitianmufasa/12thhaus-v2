@@ -223,6 +223,11 @@ jobs:
         npm cache clean --force
         npm install
         
+        # Clean Next.js build cache to prevent build conflicts
+        echo "🧹 Cleaning Next.js build cache..."
+        rm -rf .next
+        npm run build
+        
         # Verify integrations are configured
         echo "✅ Vercel token configured"
         echo "🔗 Hasura endpoint: ${HASURA_GRAPHQL_ENDPOINT:0:30}..."
