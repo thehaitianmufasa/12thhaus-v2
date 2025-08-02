@@ -1,5 +1,88 @@
-# 🚀 12THHAUS v2.0 - SPIRITUAL COMMUNITY PLATFORM
-**Enterprise Spiritual Marketplace with AI-Enhanced Practitioner Matching**
+# 🚀 12THHAUS v2.0 - SPIRITUAL WELLNESS PLATFORM
+**Authentic Spiritual Wellness Community with Intuitive Practitioner Connections**
+
+---
+
+## **🎯 RECENT SESSION UPDATES (August 2, 2025)**
+
+### **✅ PHASE 9 COMPLETE - SPIRITUAL WELLNESS COPYWRITING TRANSFORMATION**
+**Status:** ✅ **COMPLETE** | **Date:** August 2, 2025 | **Duration:** 1 hour
+
+#### **Major Accomplishments:**
+
+1. **🔮 Complete Copywriting Transformation**:
+   - ✅ **Hero Section Rebrand**: "Elevate Your Life & Career" → "Discover Your Spiritual Path"
+   - ✅ **Authentic Spiritual Language**: Transformed from coaching to spiritual wellness terminology
+   - ✅ **Trust-Based Messaging**: Added credibility signals with "certified," "experienced," "sacred"
+   - ✅ **Connection-Focused CTAs**: "Find Your Guide" → "Connect with Your Guide"
+
+2. **🕊️ Service Descriptions Enhanced**:
+   - ✅ **Tarot Reading**: Enhanced with "sacred wisdom" and "authentic readings with certified practitioners"
+   - ✅ **Reiki Healing**: Updated to "profound healing and balance through certified Reiki energy work"
+   - ✅ **Astrology Reading**: Transformed to "uncover your soul's purpose through professional astrological guidance"
+
+3. **🌟 Platform Benefits Transformed**:
+   - ✅ **"AI-Enhanced Matching" → "Intuitive Connections"**: Thoughtful spiritual alignment language
+   - ✅ **"Professional Community" → "Sacred Community"**: Authentic spiritual circle messaging
+   - ✅ **"Certified Coaches" → "Trusted Practitioners"**: Spiritual guides with safe, sacred healing spaces
+
+4. **📝 Conversion Psychology Integration**:
+   - ✅ **Trust Signals**: Emphasized practitioner credentials and experience
+   - ✅ **Journey Language**: Added "path," "healing journey," "transformation," "growth"
+   - ✅ **Sacred Container**: Created authentic spiritual platform feeling vs marketplace
+   - ✅ **Practical Benefits**: Highlighted "clarity," "balance," "inner wisdom," "healing"
+
+#### **Current Platform Identity:**
+- **Platform Focus**: Spiritual Wellness & Authentic Practitioner Guidance
+- **Target Audience**: Seekers of spiritual guidance, healing, readings (tarot, astrology, reiki)
+- **Practitioner Base**: Certified spiritual healers, readers, wellness practitioners
+- **Community Type**: Sacred circle of seekers and experienced spiritual guides
+- **User Experience**: Trust-based, connection-focused, spiritually authentic
+
+#### **Personalization Fixes:**
+- ✅ **Dashboard Personalization**: Fixed practitioner dashboard to show real Clerk user data instead of mock "Maya Rodriguez"
+- ✅ **Profile Integration**: Updated profile pages with actual user email, name, and information
+- ✅ **Authentication Flow**: Seamless integration between Clerk auth and personalized dashboard experience
+
+---
+
+## **🎯 PREVIOUS SESSION UPDATES (August 1, 2025)**
+
+### **✅ PHASE 8 COMPLETE - PLATFORM REBRAND & INFRASTRUCTURE OPTIMIZATION**
+**Status:** ✅ **COMPLETE** | **Date:** August 1, 2025 | **Duration:** 2 hours
+
+#### **Major Accomplishments:**
+
+1. **🏗️ Project Structure Optimization**:
+   - ✅ **Clean Monorepo Architecture**: Moved GraphQL server to `/backend/` directory
+   - ✅ **Eliminated Lockfile Conflicts**: Resolved "multiple lockfiles" warnings
+   - ✅ **Updated All Scripts**: Modified `reliable-start.sh`, `start-dev.sh`, `start-servers.sh` for new structure
+   - ✅ **Legacy Cleanup**: Moved `frontend-legacy-langgraph` to `_archive/` folder
+
+2. **🔧 Critical Bug Fixes**:
+   - ✅ **Frontend Connection Issue**: Fixed ERR_CONNECTION_REFUSED error using opus-researcher agent
+   - ✅ **Clerk Middleware Error**: Resolved "auth(...).protect is not a function" with async/await syntax
+   - ✅ **Import Path Corrections**: Fixed ClerkProtectedRoute import paths
+   - ✅ **Build Cache Issues**: Cleared corrupted Next.js build cache
+
+3. **🎨 Platform Rebranding**:
+   - ✅ **Hero Section Update**: Changed "Discover Your Spiritual Path" → "Elevate Your Life & Career"
+   - ✅ **Messaging Transformation**: Updated subtitle to focus on career coaching and women's empowerment
+   - ✅ **Meta Data Updates**: Changed page title and description for SEO alignment
+   - ✅ **Featured Practitioners**: Updated section to highlight "life and career coaches"
+
+4. **⚙️ Technical Improvements**:
+   - ✅ **Server Stability**: Resolved background process management issues
+   - ✅ **Clean Directory Structure**: Organized codebase with clear separation of concerns
+   - ✅ **Authentication Flow**: Verified Clerk v6.28.0 compatibility and proper async handling
+   - ✅ **Development Environment**: Confirmed both servers running stable at localhost:3000 & localhost:4000
+
+#### **Current Platform Status:**
+- **Frontend Theme**: Life & Career Coaching (professional women's empowerment)
+- **Technical Stack**: Next.js 15 + GraphQL + Clerk Auth + Supabase
+- **Architecture**: Clean monorepo with `/backend/` and `/frontend/` separation
+- **Build Status**: ✅ Zero errors, production-ready
+- **Development Ready**: ✅ All servers configured and tested
 
 ---
 
@@ -8,8 +91,12 @@
 ### **Repository Information**
 - **GitHub:** https://github.com/your-repo/12thhaus-v2
 - **Location:** `/Users/mufasa/Desktop/Clients/12thhaus-v2`
-- **Architecture:** Next.js 15 Frontend + Python Backend + Local GraphQL API + AI Agents
-- **Authentication:** Logto Enterprise Authentication System
+- **Architecture:** Next.js 15 Frontend (app directory) + Python Backend + Local GraphQL API + AI Agents
+- **Authentication:** Clerk Enterprise Authentication System (migrated from Logto)
+- **Directory Structure:** 
+  - `/frontend/app/` - Active Next.js pages (USE THIS)
+  - `/frontend/src/` - Shared components, hooks, lib, contexts
+  - **NOTE:** No src/app directory - all pages are in `/frontend/app/`
 
 ### **Current Status: ✅ PHASE 7 COMPLETE - PRODUCTION-READY AUTHENTICATION SYSTEM & GITHUB DEPLOYMENT READY**
 - **Migration Start Date:** July 24, 2025 - 1:00 PM EST
@@ -17,7 +104,7 @@
 - **Framework Status:** ✅ **12thhaus Complete Enterprise Spiritual Marketplace Platform with Production Authentication**
 - **Database Status:** ✅ **15 Tables + User Management + Service Marketplace + Booking + Social System + JWT Authentication Integration**
 - **GraphQL API:** ✅ **Production-Ready Server with JWT Authentication and Social Features at http://localhost:4000/graphql**
-- **Authentication System:** ✅ **Complete JWT-based dual user type authentication (seeker/practitioner) with route protection**
+- **Authentication System:** ✅ **Complete Clerk-based dual user type authentication (seeker/practitioner) with route protection and working sign-in/sign-up navigation**
 - **Frontend Status:** ✅ **Complete Enterprise Platform with Authentication Guards, Protected Routes, and User Type Management**
 - **Booking System:** ✅ Complete 3-step booking flow with practitioner scheduling and payment integration + Fixed service-to-practitioner mapping
 - **Service Management:** ✅ Full CRUD service management for practitioners with analytics and performance tracking
@@ -256,25 +343,25 @@ cd /Users/mufasa/Desktop/Clients/12thhaus-v2/frontend && npm run dev
 
 ## **🔧 DEVELOPMENT WORKFLOW**
 
-### **Daily Development Commands (With Authentication)**
+### **Daily Development Commands (With Clerk Authentication)**
 ```bash
 # Navigate to 12thhaus v2.0 project
 cd /Users/mufasa/Desktop/Clients/12thhaus-v2
 
-# Start GraphQL API server with JWT authentication
+# Start GraphQL API server
 npm start &
 
-# Start frontend development with authentication (separate terminal)
+# Start frontend development with Clerk authentication (separate terminal)
 cd frontend && npm run dev
 
 # Health checks
-curl -f http://localhost:3000 && echo "✅ 12thhaus Frontend with Auth"
-curl -f http://localhost:4000/graphql && echo "✅ GraphQL API with JWT"
+curl -f http://localhost:3000 && echo "✅ 12thhaus Frontend with Clerk Auth"
+curl -f http://localhost:4000/graphql && echo "✅ GraphQL API"
 
-# Test authentication endpoints
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"query": "mutation { register(email: \"test@example.com\", password: \"password\", userType: \"seeker\", energySensitivity: \"standard\", experienceLevel: \"beginner\") { token user { id email user_type } } }"}' \
-  http://localhost:4000/graphql
+# Authentication URLs
+# Sign In: http://localhost:3000/sign-in
+# Sign Up: http://localhost:3000/sign-up
+# User Type Selection: http://localhost:3000/auth/user-type
 ```
 
 ### **GraphQL Development Workflow**
@@ -781,4 +868,43 @@ All foundational systems operational - ready for spiritual marketplace feature d
 - ✅ User type verification for dashboard and feature access
 - ✅ Secure GraphQL mutations with authentication checks
 
-**🎯 READY FOR GITHUB DEPLOYMENT & PHASE 8: AI ENHANCEMENT FEATURES**
+---
+
+## **🚀 QUICK START COMMANDS (Updated Architecture)**
+
+### **Development Server Startup (New Clean Structure)**
+```bash
+# Navigate to project root
+cd /Users/mufasa/Desktop/Clients/12thhaus-v2
+
+# Start both servers reliably (recommended)
+./reliable-start.sh
+
+# Alternative: Use simple start script
+./start-dev.sh
+
+# Stop all servers
+./stop-dev.sh
+```
+
+### **Server Endpoints**
+- **Frontend (Life & Career Coaching)**: http://localhost:3000
+- **GraphQL API**: http://localhost:4000/graphql
+- **GraphQL Playground**: http://localhost:4000/graphql
+
+### **Current Platform Theme**
+- **Focus**: Life & Career Coaching for Professional Women
+- **Hero**: "Elevate Your Life & Career"
+- **Messaging**: Expert coaches, career transitions, relationships, life changes
+- **Architecture**: Clean monorepo (`/backend/` + `/frontend/`)
+
+### **Development Ready Status**
+- ✅ All servers tested and working
+- ✅ Clerk authentication v6.28.0 configured
+- ✅ Zero build errors or warnings
+- ✅ Clean project structure implemented
+- ✅ Platform rebranded and optimized
+
+**Last Updated:** August 1, 2025 - 10:45 PM EST  
+**Status:** READY FOR CONTINUED DEVELOPMENT  
+**Next Session:** Platform feature enhancements and coach onboarding flows

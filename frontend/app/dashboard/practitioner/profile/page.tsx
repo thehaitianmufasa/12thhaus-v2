@@ -1,28 +1,30 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 
 export default function PractitionerProfile() {
   const [activeTab, setActiveTab] = useState('profile')
   const [isEditing, setIsEditing] = useState(false)
+  const { user } = useUser()
 
-  // Mock practitioner data - will be replaced with real data from GraphQL
+  // Get real user data from Clerk with fallbacks to defaults
   const [practitionerProfile, setPractitionerProfile] = useState({
-    name: 'Maya Rodriguez',
-    email: 'maya@mysticmaya.com',
-    businessName: 'Mystic Maya Spiritual Guidance',
-    joinDate: 'December 2024',
-    profileImage: 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
-    bannerImage: 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800',
-    bio: 'Former corporate executive turned intuitive spiritual guide with 10+ years of experience. Specializing in helping ambitious individuals navigate life transitions with confidence and clarity.',
-    location: 'Boulder, Colorado',
-    specialties: ['Tarot Reading', 'Energy Healing', 'Chakra Balancing', 'Life Coaching'],
-    yearsExperience: 10,
-    certifications: 'Certified Reiki Master, Professional Tarot Reader (ATA), Life Coach Certification (ICF)',
-    languages: ['English', 'Spanish'],
-    sessionTypes: ['Remote', 'In-Person'],
-    favoriteColor: '#8B5CF6',
-    isVerified: true,
+    name: user?.fullName || user?.firstName || 'Practitioner',
+    email: user?.emailAddresses?.[0]?.emailAddress || 'email@example.com',
+    businessName: user?.publicMetadata?.businessName as string || `${user?.firstName || 'Your'} Spiritual Guidance`,
+    joinDate: user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recent',
+    profileImage: user?.imageUrl || 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
+    bannerImage: user?.publicMetadata?.bannerImage as string || 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800',
+    bio: user?.publicMetadata?.bio as string || 'Experienced life and career coach offering personalized guidance for your transformation.',
+    location: user?.publicMetadata?.location as string || 'Location',
+    specialties: (user?.publicMetadata?.specialties as string[]) || ['Life Coaching', 'Career Guidance'],
+    yearsExperience: (user?.publicMetadata?.yearsExperience as number) || 0,
+    certifications: user?.publicMetadata?.certifications as string || 'Professional Life Coach',
+    languages: (user?.publicMetadata?.languages as string[]) || ['English'],
+    sessionTypes: (user?.publicMetadata?.sessionTypes as string[]) || ['Remote', 'In-Person'],
+    favoriteColor: user?.publicMetadata?.favoriteColor as string || '#8B5CF6',
+    isVerified: user?.publicMetadata?.isVerified as boolean || false,
     businessHours: {
       monday: { start: '09:00', end: '17:00', active: true },
       tuesday: { start: '09:00', end: '17:00', active: true },

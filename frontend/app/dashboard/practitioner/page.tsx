@@ -1,24 +1,26 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 function PractitionerDashboardContent() {
   const [activeTab, setActiveTab] = useState('overview')
+  const { user } = useUser()
 
-  // Mock practitioner data - will be replaced with real data from GraphQL
+  // Get real user data from Clerk with fallbacks to mock data
   const practitioner = {
-    name: 'Maya Rodriguez',
-    businessName: 'Mystic Maya Spiritual Guidance',
-    joinDate: 'December 2024',
-    profileImage: 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
-    practitionerLevel: 'Master',
-    totalSessions: 240,
-    upcomingBookings: 5,
-    monthlyEarnings: 3200,
-    clientRating: 4.9,
-    specialties: ['Tarot Reading', 'Energy Healing', 'Chakra Balancing'],
-    isVerified: true
+    name: user?.fullName || user?.firstName || 'Practitioner',
+    businessName: user?.publicMetadata?.businessName as string || `${user?.firstName || 'Your'} Spiritual Guidance`,
+    joinDate: user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recent',
+    profileImage: user?.imageUrl || 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
+    practitionerLevel: user?.publicMetadata?.practitionerLevel as string || 'New',
+    totalSessions: (user?.publicMetadata?.totalSessions as number) || 0,
+    upcomingBookings: (user?.publicMetadata?.upcomingBookings as number) || 0,
+    monthlyEarnings: (user?.publicMetadata?.monthlyEarnings as number) || 0,
+    clientRating: (user?.publicMetadata?.clientRating as number) || 0,
+    specialties: (user?.publicMetadata?.specialties as string[]) || [],
+    isVerified: user?.publicMetadata?.isVerified as boolean || false
   }
 
   const upcomingBookings = [
