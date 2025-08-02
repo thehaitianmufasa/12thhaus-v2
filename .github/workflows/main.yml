@@ -173,7 +173,7 @@ jobs:
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         VERCEL_ORG_ID: team_bDGpeOkctmvHzX3wS3Ohh4Py
-        VERCEL_PROJECT_ID: prj_VO0l0ej0rloTi0sQXoIIICVrR4qf
+        VERCEL_PROJECT_ID: prj_5f56DSb0lPBmAk4Z14thLhcHRlYd
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
         CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         NEXT_PUBLIC_GRAPHQL_URL: ${{ secrets.NEXT_PUBLIC_GRAPHQL_URL }}
@@ -227,7 +227,7 @@ jobs:
         echo "🪝 N8N webhook configured: $([ -n "$N8N_WEBHOOK_URL" ] && echo "Yes" || echo "No")"
         
         # Deploy to Vercel with production build to correct project
-        npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm --scope="$VERCEL_ORG_ID"
+        npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm --scope="$VERCEL_ORG_ID" --cwd=.
         
         echo "✅ Platform deployment completed"
         
