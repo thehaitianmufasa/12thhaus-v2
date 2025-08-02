@@ -217,7 +217,10 @@ jobs:
           exit 1
         fi
         
-        # Install dependencies first
+        # Install dependencies from frontend directory
+        echo "📦 Installing frontend dependencies..."
+        cd frontend
+        npm cache clean --force
         npm install
         
         # Verify integrations are configured
@@ -226,6 +229,7 @@ jobs:
         echo "🪝 N8N webhook configured: $([ -n "$N8N_WEBHOOK_URL" ] && echo "Yes" || echo "No")"
         
         # Deploy to Vercel with production build to correct project
+        # Ensure we're in frontend directory for deployment
         npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm --scope="$VERCEL_ORG_ID"
         
         echo "✅ Platform deployment completed"
