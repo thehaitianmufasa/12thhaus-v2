@@ -181,8 +181,7 @@ jobs:
         # Install Vercel CLI
         npm install -g vercel@latest
         
-        # Deploy platform frontend to Vercel
-        cd frontend
+        # Deploy platform frontend to Vercel  
         echo "🚀 Deploying 12thhaus Spiritual Platform..."
         
         # Set environment for deployment
@@ -227,7 +226,6 @@ jobs:
         echo "🪝 N8N webhook configured: $([ -n "$N8N_WEBHOOK_URL" ] && echo "Yes" || echo "No")"
         
         # Deploy to Vercel with production build to correct project
-        cd frontend
         npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm --scope="$VERCEL_ORG_ID"
         
         echo "✅ Platform deployment completed"
