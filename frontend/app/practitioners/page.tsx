@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import ProtectedRoute from '../../components/ClerkProtectedRoute'
 
 function PractitionersPageContent() {
   const [selectedSpecialty, setSelectedSpecialty] = useState('all')
@@ -17,7 +17,7 @@ function PractitionersPageContent() {
 
   const practitioners = [
     {
-      id: 1,
+      id: '2004c8aa-8779-4ec0-98ff-1f85099c94fe', // Maya Rodriguez database user_id
       name: 'Mystic Maya Spiritual Guidance',
       practitioner: 'Maya Rodriguez',
       specialties: ['Tarot Reading', 'Energy Healing', 'Chakra Balancing'],
@@ -27,14 +27,14 @@ function PractitionersPageContent() {
       yearsExperience: 10,
       location: 'Boulder, Colorado',
       bio: 'Former corporate executive turned intuitive spiritual guide. Specializing in helping ambitious individuals navigate career transitions and spiritual awakening with confidence and clarity.',
-      profile_image: 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
+      profile_image: 'https://t4.ftcdn.net/jpg/02/76/94/85/360_F_276948525_rdTb1EKACpjnnA5XyRKLQC2lBYPVi7vQ.jpg',
       sessionTypes: ['Remote', 'In-Person'],
       languages: ['English', 'Spanish'],
       pricing: '$75-150 per session',
       verified: true
     },
     {
-      id: 2,
+      id: 'aa86d565-b888-4fe9-ab69-8dd6a815def1', // Dr. Keisha Johnson database user_id
       name: 'Sacred Healing Arts',
       practitioner: 'Dr. Keisha Johnson',
       specialties: ['Reiki Healing', 'Crystal Therapy', 'Meditation'],
@@ -44,14 +44,14 @@ function PractitionersPageContent() {
       yearsExperience: 15,
       location: 'Sedona, Arizona',
       bio: 'Licensed therapist and Reiki Master specializing in trauma healing and spiritual recovery. Expert in combining traditional therapy with energy healing modalities.',
-      profile_image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400',
+      profile_image: 'https://t4.ftcdn.net/jpg/01/96/09/21/360_F_196092169_tqXVrlcZnpt0mDaNFqq5Ife4q01GYDXH.jpg',
       sessionTypes: ['Remote', 'In-Person'],
       languages: ['English'],
       pricing: '$65-120 per session',
       verified: true
     },
     {
-      id: 3,
+      id: 'ab5feb84-b8e5-4476-b61a-d2d5bbff87b8', // Sarah Chen database user_id
       name: 'Cosmic Insights Astrology',
       practitioner: 'Sarah Chen',
       specialties: ['Natal Charts', 'Transit Readings', 'Relationship Astrology'],
@@ -61,14 +61,14 @@ function PractitionersPageContent() {
       yearsExperience: 8,
       location: 'Portland, Oregon',
       bio: 'Certified astrologer with expertise in psychological astrology and evolutionary approach. Helping clients understand their cosmic blueprint and life purpose.',
-      profile_image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
+      profile_image: 'https://t3.ftcdn.net/jpg/04/17/85/08/360_F_417850826_ZQ98ggEKoZcqFjfLSgmBwYPHu1Tc4MGU.jpg',
       sessionTypes: ['Remote', 'In-Person'],
       languages: ['English', 'Mandarin'],
       pricing: '$100-200 per session',
       verified: true
     },
     {
-      id: 4,
+      id: 'af90a604-3f20-47c8-9b92-ae0f8bb049e3', // Sophia Williams database user_id
       name: 'Radiant Soul Coaching',
       practitioner: 'Sophia Williams',
       specialties: ['Life Coaching', 'Relationship Guidance', 'Self-Love'],
@@ -78,14 +78,14 @@ function PractitionersPageContent() {
       yearsExperience: 6,
       location: 'Austin, Texas',
       bio: 'Relationship coach and energy healer specializing in helping women reclaim their power in love and life. Expert in boundary setting and authentic self-expression.',
-      profile_image: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400',
+      profile_image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face',
       sessionTypes: ['Remote', 'In-Person'],
       languages: ['English'],
       pricing: '$80-140 per session',
       verified: true
     },
     {
-      id: 5,
+      id: 'bf719579-5527-43fe-b499-e3e3e3a6ebc0', // Michael Thompson database user_id
       name: 'Inner Light Healing',
       practitioner: 'Michael Thompson',
       specialties: ['Energy Healing', 'Shamanic Healing', 'Sound Therapy'],
@@ -95,14 +95,14 @@ function PractitionersPageContent() {
       yearsExperience: 12,
       location: 'Santa Fe, New Mexico',
       bio: 'Shamanic practitioner and sound healer with training in indigenous healing traditions. Specializing in soul retrieval and spiritual cleansing.',
-      profile_image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+      profile_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
       sessionTypes: ['In-Person'],
       languages: ['English'],
       pricing: '$90-160 per session',
       verified: true
     },
     {
-      id: 6,
+      id: '095ee515-d3eb-429f-aab8-8a3909375647', // Anna Lopez database user_id
       name: 'Peaceful Mind Meditation',
       practitioner: 'Anna Lopez',
       specialties: ['Guided Meditation', 'Mindfulness', 'Stress Relief'],
@@ -112,7 +112,7 @@ function PractitionersPageContent() {
       yearsExperience: 5,
       location: 'San Diego, California',
       bio: 'Certified mindfulness instructor and meditation teacher. Helping busy professionals find inner peace and develop sustainable meditation practices.',
-      profile_image: 'https://images.unsplash.com/photo-1554727242-741c14fa561c?w=400',
+      profile_image: 'https://images.unsplash.com/photo-1542596768-5d1d21f1cf98?w=400&h=400&fit=crop&crop=face',
       sessionTypes: ['Remote'],
       languages: ['English', 'Spanish'],
       pricing: '$40-80 per session',

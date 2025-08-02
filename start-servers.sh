@@ -57,8 +57,9 @@ fi
 echo -e "${GREEN}🔧 Starting GraphQL Backend Server...${NC}"
 echo "   Location: http://localhost:4000/graphql"
 
-# Start GraphQL server in background with logging
-npm start > graphql-server.log 2>&1 &
+# Navigate to backend directory and start GraphQL server in background with logging
+cd /Users/mufasa/Desktop/Clients/12thhaus-v2/backend
+npm start > ../graphql-server.log 2>&1 &
 GRAPHQL_PID=$!
 
 # Wait for GraphQL server to be ready

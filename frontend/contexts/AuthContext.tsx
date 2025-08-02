@@ -66,7 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           query: `
             mutation Login($email: String!, $password: String!) {
               login(email: $email, password: $password) {
-                success
                 token
                 user {
                   id
@@ -75,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   user_type
                   profile_image_url
                 }
-                message
+                expires_in
               }
             }
           `,
@@ -85,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json()
       
-      if (data.data?.login?.success) {
+      if (data.data?.login?.token && data.data?.login?.user) {
         const { token, user: userData } = data.data.login
         
         // Store auth data
@@ -103,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         return true
       } else {
-        console.error('Login failed:', data.data?.login?.message || 'Unknown error')
+        console.error('Login failed:', data.errors || 'Invalid credentials')
         return false
       }
     } catch (error) {
@@ -127,7 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           query: `
             mutation Register($input: RegisterInput!) {
               register(input: $input) {
-                success
                 token
                 user {
                   id
@@ -136,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   user_type
                   profile_image_url
                 }
-                message
+                expires_in
               }
             }
           `,
@@ -146,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json()
       
-      if (data.data?.register?.success) {
+      if (data.data?.register?.token && data.data?.register?.user) {
         const { token, user: newUser } = data.data.register
         
         // Store auth data
@@ -164,7 +162,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         return true
       } else {
-        console.error('Registration failed:', data.data?.register?.message || 'Unknown error')
+        console.error('Registration failed:', data.errors || 'Registration failed')
         return false
       }
     } catch (error) {

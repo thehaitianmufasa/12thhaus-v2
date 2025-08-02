@@ -1,20 +1,22 @@
 'use client'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useUser } from '@clerk/nextjs'
 
 export default function SeekerProfile() {
   const [activeTab, setActiveTab] = useState('profile')
   const [isEditing, setIsEditing] = useState(false)
-
-  // Mock user data - will be replaced with real data from GraphQL
+  const { user, isLoaded } = useUser()
+  
+  // Real user data from Clerk with fallback defaults
   const [userProfile, setUserProfile] = useState({
-    name: 'Sarah Johnson',
-    email: 'sarah@example.com',
+    name: '',
+    email: '',
     joinDate: 'January 2025',
-    profileImage: 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
+    profileImage: '',
     bannerImage: 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800',
     bio: 'Passionate seeker on a journey of spiritual growth and self-discovery. Love exploring energy healing, tarot, and mindfulness practices.',
-    location: 'San Francisco, CA',
+    location: 'Brooklyn,NY',
     spiritualInterests: ['Tarot Reading', 'Reiki Healing', 'Meditation', 'Chakra Balancing'],
     favoriteColor: '#8B5CF6', // Purple
     privacy: 'public',
@@ -24,6 +26,19 @@ export default function SeekerProfile() {
       community: true
     }
   })
+
+  // Update profile with real user data when loaded
+  useEffect(() => {
+    if (isLoaded && user) {
+      setUserProfile(prev => ({
+        ...prev,
+        name: user.fullName || user.firstName + ' ' + user.lastName || '',
+        email: user.emailAddresses[0]?.emailAddress || '',
+        profileImage: user.imageUrl || prev.profileImage,
+        joinDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : prev.joinDate
+      }))
+    }
+  }, [isLoaded, user])
 
   const messages = [
     {
@@ -125,8 +140,8 @@ export default function SeekerProfile() {
               </Link>
               <div className="flex items-center space-x-3">
                 <img
-                  src={userProfile.profileImage}
-                  alt={userProfile.name}
+                  src={userProfile.profileImage || 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400'}
+                  alt={userProfile.name || 'Profile'}
                   className="w-10 h-10 rounded-full border-2 border-purple-200"
                 />
                 <div className="text-right">
@@ -166,8 +181,8 @@ export default function SeekerProfile() {
                 {/* Profile Image */}
                 <div className="relative -mt-16">
                   <img
-                    src={userProfile.profileImage}
-                    alt={userProfile.name}
+                    src={userProfile.profileImage || 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400'}
+                    alt={userProfile.name || 'Profile'}
                     className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
                   />
                   {isEditing && (

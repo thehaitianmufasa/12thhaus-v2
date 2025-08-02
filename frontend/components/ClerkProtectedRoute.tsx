@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth, useUser } from '@clerk/nextjs'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -15,20 +15,30 @@ export default function ProtectedRoute({
   allowedUserTypes = ['seeker', 'practitioner'],
   redirectTo = '/auth'
 }: ProtectedRouteProps) {
-  const { user, loading, isAuthenticated } = useAuth()
+  const { isLoaded, isSignedIn } = useAuth()
+  const { user } = useUser()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading) {
-      if (!isAuthenticated) {
-        // Redirect to auth page if not authenticated
-        router.push(redirectTo)
+    if (isLoaded && !isSignedIn) {
+      // Redirect to auth page if not authenticated
+      router.push(redirectTo)
+      return
+    }
+
+    if (isLoaded && isSignedIn && user) {
+      const userType = user.unsafeMetadata?.userType as 'seeker' | 'practitioner' | undefined
+      
+      // If user doesn't have a type set, redirect to user type selection
+      if (!userType) {
+        router.push('/auth/user-type')
         return
       }
 
-      if (user && allowedUserTypes.length > 0 && !allowedUserTypes.includes(user.user_type)) {
+      // Check if user type is allowed for this route
+      if (allowedUserTypes.length > 0 && !allowedUserTypes.includes(userType)) {
         // Redirect to appropriate dashboard if user type not allowed
-        if (user.user_type === 'practitioner') {
+        if (userType === 'practitioner') {
           router.push('/dashboard/practitioner')
         } else {
           router.push('/dashboard/seeker')
@@ -36,10 +46,10 @@ export default function ProtectedRoute({
         return
       }
     }
-  }, [user, loading, isAuthenticated, allowedUserTypes, redirectTo, router])
+  }, [isLoaded, isSignedIn, user, allowedUserTypes, redirectTo, router])
 
   // Show loading spinner while checking authentication
-  if (loading) {
+  if (!isLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-3">
@@ -51,7 +61,7 @@ export default function ProtectedRoute({
   }
 
   // Don't render anything if redirecting
-  if (!isAuthenticated || (user && allowedUserTypes.length > 0 && !allowedUserTypes.includes(user.user_type))) {
+  if (!isSignedIn || (user && !user.unsafeMetadata?.userType)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-3">

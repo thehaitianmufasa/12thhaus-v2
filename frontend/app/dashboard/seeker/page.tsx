@@ -1,20 +1,46 @@
 'use client'
 import Link from 'next/link'
-import { useState } from 'react'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { useState, useEffect } from 'react'
+import { useUser } from '@clerk/nextjs'
+import ProtectedRoute from '../../../components/ClerkProtectedRoute'
 
 function SeekerDashboardContent() {
   const [activeTab, setActiveTab] = useState('overview')
-
-  // Mock user data - will be replaced with real data from GraphQL
-  const user = {
-    name: 'Sarah',
+  const { user: clerkUser, isLoaded } = useUser()
+  
+  // Real user data from Clerk with fallback defaults
+  const [user, setUser] = useState({
+    name: '',
     joinDate: 'January 2025',
     profileImage: 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400',
     spiritualLevel: 'Intermediate',
     completedSessions: 8,
     upcomingSessions: 2,
     favoriteServices: ['Tarot Reading', 'Reiki Healing']
+  })
+
+  // Update user data when Clerk user loads
+  useEffect(() => {
+    if (isLoaded && clerkUser) {
+      setUser(prev => ({
+        ...prev,
+        name: clerkUser.firstName || clerkUser.fullName?.split(' ')[0] || 'Seeker',
+        profileImage: clerkUser.imageUrl || prev.profileImage,
+        joinDate: clerkUser.createdAt ? new Date(clerkUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : prev.joinDate
+      }))
+    }
+  }, [isLoaded, clerkUser])
+
+  // Show loading state while user data is loading
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <span className="text-gray-600 text-lg">Loading your dashboard...</span>
+        </div>
+      </div>
+    )
   }
 
   const upcomingBookings = [
@@ -126,8 +152,8 @@ function SeekerDashboardContent() {
               </Link>
               <Link href="/dashboard/seeker/profile" className="flex items-center space-x-3 hover:bg-purple-50 rounded-lg p-2 transition-colors">
                 <img
-                  src={user.profileImage}
-                  alt={user.name}
+                  src={user.profileImage || 'https://images.unsplash.com/photo-1494790108755-2616c381b2e6?w=400'}
+                  alt={user.name || 'Profile'}
                   className="w-10 h-10 rounded-full border-2 border-purple-200"
                 />
                 <div className="text-right">
