@@ -225,9 +225,7 @@ jobs:
         echo "🪝 N8N webhook configured: $([ -n "$N8N_WEBHOOK_URL" ] && echo "Yes" || echo "No")"
         
         # Deploy to Vercel with production build to correct project
-        npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm \
-          --org="$VERCEL_ORG_ID" \
-          --scope="$VERCEL_ORG_ID"
+        npx vercel $DEPLOY_ENV --token="$VERCEL_TOKEN" --confirm --scope="$VERCEL_ORG_ID"
         
         echo "✅ Platform deployment completed"
         
