@@ -14,5 +14,5 @@ export default function Home() {
     const fetchPractitioners = async () => {
       try {
         const graphqlUrl = typeof window !== 'undefined' 
-          ? 'http://localhost:4000/graphql'  // Client-side URL
+          ? '/api/graphql'  // Client-side URL
           : process

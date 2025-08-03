@@ -19,7 +19,7 @@ export default function UserProfile() {
     const fetchUser = async () => {
       console.log('Fetching user profile for ID:', userId)
       try {
-        const response = await fetch('http://localhost:4000/graphql', {
+        const response = await fetch('/api/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ export default function BookServicePage() {
     const fetchServiceData = async () => {
       try {
         // Fetch service data from GraphQL
-        const response = await fetch('http://localhost:4000/graphql', {
+        const response = await fetch('/api/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ export default function BookServicePage() {
   const handleBookingSubmit = async () => {
     try {
       // Create booking via GraphQL mutation
-      const response = await fetch('http://localhost:4000/graphql', {
+      const response = await fetch('/api/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

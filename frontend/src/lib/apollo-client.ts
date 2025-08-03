@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 // Environment-aware GraphQL URL configuration
 const getGraphQLUrl = () => {
   // Use environment variable, fallback to localhost for development
-  return process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql';
+  return process.env.NEXT_PUBLIC_GRAPHQL_URL || '/api/graphql';
 };
 
 // Create HTTP Link to 12thhaus GraphQL Server

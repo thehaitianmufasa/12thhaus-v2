@@ -27,7 +27,7 @@ export default function UserTypePage() {
       })
 
       // Also update in our GraphQL backend
-      await fetch('http://localhost:4000/graphql', {
+      await fetch('/api/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

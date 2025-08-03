@@ -26,7 +26,7 @@ function CommunityFeedContent() {
   useEffect(() => {
     const fetchCommunityData = async () => {
       try {
-        const response = await fetch('http://localhost:4000/graphql', {
+        const response = await fetch('/api/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -275,7 +275,7 @@ function CommunityFeedContent() {
     if (newPost.trim()) {
       try {
         // Create post via GraphQL mutation
-        const response = await fetch('http://localhost:4000/graphql', {
+        const response = await fetch('/api/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -364,7 +364,7 @@ function CommunityFeedContent() {
       }))
 
       // Send GraphQL mutation
-      const response = await fetch('http://localhost:4000/graphql', {
+      const response = await fetch('/api/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -431,7 +431,7 @@ function CommunityFeedContent() {
       }))
 
       // Send GraphQL mutation
-      const response = await fetch('http://localhost:4000/graphql', {
+      const response = await fetch('/api/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -494,7 +494,7 @@ function CommunityFeedContent() {
       }))
 
       // Send GraphQL mutation
-      const response = await fetch('http://localhost:4000/graphql', {
+      const response = await fetch('/api/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
