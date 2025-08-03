@@ -25,7 +25,7 @@ export default function AuthCallback() {
 
         if (code) {
           // Exchange code for tokens via your Logto integration
-          const response = await fetch('http://localhost:4000/auth/logto/callback', {
+          const response = await fetch('/api/auth/logto/callback', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
