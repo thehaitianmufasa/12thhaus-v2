@@ -12,6 +12,9 @@ export default function AuthCallback() {
     // Handle OAuth callback from Logto (Google/Apple/Email)
     const handleCallback = async () => {
       try {
+        // Only run in browser, not during build
+        if (typeof window === 'undefined') return
+        
         const urlParams = new URLSearchParams(window.location.search)
         const code = urlParams.get('code')
         const state = urlParams.get('state')
@@ -60,7 +63,8 @@ export default function AuthCallback() {
       }
     }
 
-    handleCallback()
+    // Add a small delay to ensure we're in browser
+    setTimeout(handleCallback, 100)
   }, [router])
 
   return (
