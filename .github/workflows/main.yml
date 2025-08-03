@@ -229,7 +229,15 @@ jobs:
         
         # Create .env.local from .env.production for build
         echo "📝 Setting up environment variables for build..."
-        cp .env.production .env.local
+        # Check if .env.production exists in current directory
+        if [ -f ".env.production" ]; then
+          cp .env.production .env.local
+        else
+          # Create .env.local with required variables
+          echo "Creating .env.local with Clerk keys..."
+          echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_c3dlZXBpbmctdG9hZC04MS5jbGVyay5hY2NvdW50cy5kZXYk" > .env.local
+          echo "CLERK_SECRET_KEY=sk_test_Bv2s7IPVk5TLuZjz2XGrQTlil45x8VsiZIw4wYeUCH" >> .env.local
+        fi
         
         # Override with GitHub secrets if available
         if [ -n "${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" ]; then
