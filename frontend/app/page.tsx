@@ -3,6 +3,8 @@ import { Navigation } from '../components/navigation'
 import { HeroActions } from '../components/hero-actions'
 import { FeaturedPractitioners } from '../components/featured-practitioners'
 
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   const services = [
     {
