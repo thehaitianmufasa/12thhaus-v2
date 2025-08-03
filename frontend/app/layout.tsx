@@ -15,9 +15,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Only use ClerkProvider if the key is available
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  
+  const content = (
+    <html lang="en">
+      <body className={inter.className}>
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+          {children}
+        </div>
+      </body>
+    </html>
+  )
+  
+  if (!clerkKey) {
+    // Return without ClerkProvider during build if no key
+    return content
+  }
+  
   return (
     <ClerkProvider 
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+      publishableKey={clerkKey}
       appearance={{
         baseTheme: undefined,
         variables: {
@@ -25,13 +43,7 @@ export default function RootLayout({
         }
       }}
     >
-      <html lang="en">
-        <body className={inter.className}>
-          <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
-            {children}
-          </div>
-        </body>
-      </html>
+      {content}
     </ClerkProvider>
   )
 }
