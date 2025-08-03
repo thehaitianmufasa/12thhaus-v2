@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default function UserTypePage() {
   const [selectedType, setSelectedType] = useState<'seeker' | 'practitioner' | null>(null)
   const [isLoading, setIsLoading] = useState(false)

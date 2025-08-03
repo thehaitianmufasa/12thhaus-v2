@@ -6,6 +6,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { clerkTheme } from '../../../lib/clerk-theme'
 
+export const dynamic = 'force-dynamic'
+
 export default function AuthPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
